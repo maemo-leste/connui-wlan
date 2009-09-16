@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+build:
+
+clean:
+	dh_testdir
+	dh_clean -pconnui-conndlgs-wlan
+
+binary:
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	mkdir -p debian/connui-conndlgs-wlan
+	cp -ra files/* debian/connui-conndlgs-wlan
+	dh_installdocs -pconnui-conndlgs-wlan
+	dh_installchangelogs -pconnui-conndlgs-wlan
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+.PHONY: build clean binary

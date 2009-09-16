@@ -1,0 +1,302 @@
+connui-wlan (2.43+0m5) unstable; urgency=low
+
+  * This entry has been added by BIFH queue processor
+    Suffix +0m5 added to package revision
+
+ -- Mika Linnanoja <mika.linnanoja@nokia.com>  Wed, 16 Sep 2009 03:26:55 +0300
+
+connui-wlan (2.43) unstable; urgency=low
+
+  * Fixes: NB#134893 - Stop WLAN scan while screen is blanked
+
+ -- Mikko Mehtonen <ext-mikko.j.mehtonen@nokia.com>  Tue, 15 Sep 2009 09:09:05 +0300
+
+connui-wlan (2.42) unstable; urgency=low
+
+  * Signal 0 icon added for NB#126957
+
+ -- Mikko Mehtonen <ext-mikko.j.mehtonen@nokia.com>  Mon, 13 Jul 2009 11:28:03 +0300
+
+connui-wlan (2.41) unstable; urgency=low
+
+  * Fixes: NB#119161 - Incorrect WPA pre-shared key cannot be 
+    corrected without recreating connection
+  * Fixes: NB#118053 - Connectivity Wizard scan function 
+    was invoked only once 
+
+ -- Mikko Mehtonen <ext-mikko.j.mehtonen@nokia.com>  Fri, 29 May 2009 11:34:02 +0300
+
+connui-wlan (2.40) unstable; urgency=low
+
+  * Fixes: NB#117859 - Customized WLAN AP with EAP MSCHAPV2 
+    password prompt not shown correctly
+
+ -- Mikko Mehtonen <ext-mikko.j.mehtonen@nokia.com>  Tue, 26 May 2009 08:41:21 +0300
+
+connui-wlan (2.39) unstable; urgency=low
+
+  * Fixes: NB#107822 - Dismissing WPS dialog after PBC method 
+    selection does not cancel WPS procedure
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue,  7 Apr 2009 13:19:05 +0300
+
+connui-wlan (2.38) unstable; urgency=low
+
+  * Fixes: NB#106764 Dismissing PIN code dialog does not cancel WPS 
+    procedure
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon, 23 Mar 2009 10:57:48 +0200
+
+connui-wlan (2.37) unstable; urgency=low
+
+  * Fixes: NB#105894 - Network connection error dialog looping
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon, 16 Mar 2009 09:35:30 +0200
+
+connui-wlan (2.36) unstable; urgency=low
+
+  * Fixes: NB#105178 connui packages shouldn't depend on libhildonhelp0
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri, 13 Mar 2009 08:55:32 +0200
+
+connui-wlan (2.35) unstable; urgency=low
+
+  * WPS process canceling fixed more. Fixes: NB#101733
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Thu, 26 Feb 2009 09:20:03 +0200
+
+connui-wlan (2.34) unstable; urgency=low
+
+  * Refix WPS process canceling.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 17 Feb 2009 11:26:20 +0200
+
+connui-wlan (2.33) unstable; urgency=low
+
+  * Abort wps process when canceling WPS dialog.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri, 13 Feb 2009 10:37:44 +0200
+
+connui-wlan (2.32) unstable; urgency=low
+
+  * Disable predictive text input from password etc. fields. Fixes: NB#99980
+  * Fixes to problems found by Coverity.
+  * Show WPS PIN code in it's own label. Fixes: NB#100736
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri,  6 Feb 2009 11:05:47 +0200
+
+connui-wlan (2.31) unstable; urgency=low
+
+  * Converted to use the new certificate management library.
+  * Fixed memory leak in iap_wizard_wlan_advanced_settings().
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 27 Jan 2009 13:09:12 +0200
+
+connui-wlan (2.30) unstable; urgency=low
+
+  * Check for empty IAP name in wizard. Fixes: NB#92862
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Wed, 14 Jan 2009 13:46:24 +0200
+
+connui-wlan (2.29) unstable; urgency=low
+
+  * Call leave_page when leaving wizard WLAN scan. Fixes: NB#93351
+  * Have enough commas in tunneled_eap_types array. Fixes: NB#92863
+  * Correctly check for credentials validity. Fixes: NB#97389
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri,  9 Jan 2009 15:02:30 +0200
+
+connui-wlan (2.28) unstable; urgency=low
+
+  * Recompilation needed because of IAP scan API changes.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 30 Dec 2008 11:53:29 +0200
+
+connui-wlan (2.27) unstable; urgency=low
+
+  * Updated to match the latest icon names.
+  * Updated to use scanning options for iap_scan_start().
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 23 Dec 2008 08:33:13 +0200
+
+connui-wlan (2.26) unstable; urgency=low
+
+  * Reset WPS timer when OK button is pressed.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Thu, 18 Dec 2008 09:14:02 +0200
+
+connui-wlan (2.25) unstable; urgency=low
+
+  * Removed EAP_WPS_FAIL_SIG signal handling.
+  * Reset WPS progress state when new WPS dialog is requested.
+  * Launch WPS timer only on pressing OK button.
+  * Always send WPS reply signal when WPS PIN dialog is requested.
+    Fixes: NB#91801
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Wed, 17 Dec 2008 13:32:38 +0200
+
+connui-wlan (2.24) unstable; urgency=low
+
+  * Show only WLAN networks with ID in IAP wizard. Fixes: NB#91604
+  * Fixed l10n dependencies.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon, 15 Dec 2008 08:38:18 +0200
+
+connui-wlan (2.23) unstable; urgency=low
+
+  * Go to correct wizard page when TTLS is selected. Fixes: NB#92860
+  * Check scan question against correct response. Fixes: NB#94063
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Wed,  3 Dec 2008 15:03:49 +0200
+
+connui-wlan (2.22) unstable; urgency=low
+
+  * Show progress bar for WPS progress.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon,  1 Dec 2008 10:08:25 +0200
+
+connui-wlan (2.21) unstable; urgency=low
+
+  * Updated to use icon names without sizes.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 25 Nov 2008 08:37:53 +0200
+
+connui-wlan (2.20) unstable; urgency=low
+
+  * Fixed "scan for available wlans" confirmation note.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri, 21 Nov 2008 11:20:15 +0200
+
+connui-wlan (2.19) unstable; urgency=low
+
+  * Fremantle close/cancel button removal.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Thu, 13 Nov 2008 13:22:16 +0200
+
+connui-wlan (2.18) unstable; urgency=low
+
+  * Destroy PIN button in WPS PIN dialog. Fixes: NB#91891 
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri,  7 Nov 2008 09:55:00 +0200
+
+connui-wlan (2.17) unstable; urgency=low
+
+  * Updated to use new icon names.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 28 Oct 2008 10:21:37 +0200
+
+connui-wlan (2.16) unstable; urgency=low
+
+  * Link GTC challenge dialog against iapsettings. Fixes: NB#90193
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Thu, 16 Oct 2008 12:09:24 +0300
+
+connui-wlan (2.15) unstable; urgency=low
+
+  * Fixed GConf schema to have icon and animations names for WLAN.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue,  7 Oct 2008 09:34:47 +0300
+
+connui-wlan (2.14) unstable; urgency=low
+
+  * Hildon 2.2 changes to EasyWLAN dialogs.
+  * Removed EAP SIM from EAP types.
+  * Use iap widgets API instead of own implementation.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Thu,  2 Oct 2008 09:29:25 +0300
+
+connui-wlan (2.13) unstable; urgency=low
+
+  * Fix for handling no networks found case in WPS.
+  * Show WPS PIN code in syslog.
+  * Avoid multiple scan stop callbacks in WPS plugin.
+  * Select connection after WPS IAP has been disconnected.
+  * Show always error note when aborting WPS process.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri, 26 Sep 2008 10:41:35 +0300
+
+connui-wlan (2.12) unstable; urgency=low
+
+  * Fix OK button pressed twice case in WPS.
+  * Scan only WLANs in WPS.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Fri, 19 Sep 2008 14:06:52 +0300
+
+connui-wlan (2.11) unstable; urgency=low
+
+  * Reply to WPS select method immediately when PIN is selected
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Wed, 10 Sep 2008 10:04:00 +0300
+
+connui-wlan (2.10) unstable; urgency=low
+
+  * Enabled libosso-certman support.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon,  8 Sep 2008 09:38:48 +0300
+
+connui-wlan (2.9) unstable; urgency=low
+
+  * Fixes to WPS handling and UI.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 26 Aug 2008 12:46:32 +0300
+
+connui-wlan (2.8) unstable; urgency=low
+
+  *  Fixed WPS PIN GConf key.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon, 11 Aug 2008 10:39:08 +0300
+
+connui-wlan (2.7) unstable; urgency=low
+
+  * Implemented required scan view functionality changes.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon,  7 Jul 2008 15:44:57 +0300
+
+connui-wlan (2.6) unstable; urgency=low
+
+  * Updated WPS UI according to UI specification 1.0 (still old widgets)
+  * Stop WPS scanning as early as possible.
+  * Partial: NR#189977, NR#189976
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 24 Jun 2008 15:14:28 +0300
+
+connui-wlan (2.5) unstable; urgency=low
+
+  * Updated to depend on icd2-dev.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 17 Jun 2008 09:50:14 +0300
+
+connui-wlan (2.4) unstable; urgency=low
+
+  * Draft version of WPS UI
+  * Fixed gettext support
+  * Dynamically provide IAP type labels for IAP wizard
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Mon,  9 Jun 2008 15:25:06 +0300
+
+connui-wlan (2.3) unstable; urgency=low
+
+  * Use libconnui for flightmode handling.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Wed, 23 Apr 2008 12:51:52 +0300
+
+connui-wlan (2.2) unstable; urgency=low
+
+  * Fixed some build dependencies.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 22 Apr 2008 14:35:14 +0300
+
+connui-wlan (2.1) unstable; urgency=low
+
+  * Fixed GConf schema installation.
+  * Get rid of osso-af-settings.
+  * Temporarily removed libosso-certman-dev from build dependencies.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Wed,  9 Apr 2008 13:52:18 +0300
+
+connui-wlan (2.0) unstable; urgency=low
+
+  * initial release.
+
+ -- Aapo Makela <aapo.makela@nokia.com>  Tue, 25 Mar 2008 12:41:48 +0300
+
