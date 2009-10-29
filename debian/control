@@ -6,7 +6,7 @@ Package: connui-conndlgs-wlan
 Section: x11
 Priority: optional
 Architecture: armel
-Depends: connui-iapsettings, libatk1.0-0 (>= 1.24.0), libc6 (>= 2.5.0-1), libcairo2, libconbtui0, libconnui, libdbus-1-3 (>= 1.1.4), libdbus-glib-1-2 (>= 0.76), libfontconfig1 (>= 2.6.0), libfreetype6 (>= 2.3.9), libgconf2-6 (>= 2.13.5), libglib2.0-0 (>= 2.20.0), libgtk2.0-0 (>= 2:2.12.9-0osso1), libhildon1, libmaemosec-certman-applet0, libmaemosec-certman0, libmaemosec0, libosso1 (>= 2.23), libpango1.0-0, libssl0.9.8 (>= 0.9.8f-5), osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0
+Depends: connui-iapsettings, libatk1.0-0 (>= 1.24.0), libc6 (>= 2.5.0-1), libcairo2, libconbtui0, libconnui, libdbus-1-3 (>= 1.1.4), libdbus-glib-1-2 (>= 0.76), libfontconfig1 (>= 2.6.0), libfreetype6 (>= 2.3.9), libgconf2-6 (>= 2.13.5), libglib2.0-0 (>= 2.20.0), libgtk2.0-0 (>= 2:2.12.9-0osso1), libhildon1, libmaemosec-certman-applet0, libmaemosec-certman0, libmaemosec0, libosso1 (>= 2.26), libpango1.0-0, libssl0.9.8 (>= 0.9.8f-5), osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0
 Description: Connectivity WLAN Dialogs
  This package provides the Connectivity Dialogs for WLAN that are activated
  via Conndlgs daemon.
