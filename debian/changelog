@@ -1,9 +1,15 @@
-connui-wlan (2.44+0m5) unstable; urgency=low
+connui-wlan (2.45+0m5) unstable; urgency=low
 
   * This entry has been added by BIFH queue processor
     Suffix +0m5 added to package revision
 
- -- Mika Linnanoja <mika.linnanoja@nokia.com>  Thu, 29 Oct 2009 03:22:40 +0200
+ -- Antti Julku <ext-antti.julku@nokia.com>  Wed, 03 Feb 2010 14:01:04 +0200
+
+connui-wlan (2.45) unstable; urgency=low
+
+  * Fixes: NB#153541 - Add PAP UI
+
+ -- Mikko Mehtonen <ext-mikko.j.mehtonen@nokia.com>  Tue, 19 Jan 2010 09:24:19 +0200
 
 connui-wlan (2.44) unstable; urgency=low
 
