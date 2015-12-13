@@ -2,17 +2,19 @@
 # -*- makefile -*-
 
 build:
+	dh_testdir
+	$(MAKE)
 
 clean:
 	dh_testdir
+	-$(MAKE) clean
 	dh_clean -pconnui-conndlgs-wlan
 
 binary:
 	dh_testdir
 	dh_testroot
 	dh_clean -k
-	mkdir -p debian/connui-conndlgs-wlan
-	cp -ra files/* debian/connui-conndlgs-wlan
+	$(MAKE) DESTDIR="$(CURDIR)/debian/connui-conndlgs-wlan" install
 	dh_installdocs -pconnui-conndlgs-wlan
 	dh_installchangelogs -pconnui-conndlgs-wlan
 	dh_compress
