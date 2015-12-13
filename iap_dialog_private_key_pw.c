@@ -1,3 +1,13 @@
+#include <glib.h>
+#include <dbus/dbus.h>
+#include <icd/osso-ic-ui-dbus.h>
+#include <libconnui.h>
+#include <maemosec_certman.h>
+#include <osso-applet-certman.h>
+
+void iap_dialog_register_service(const char *, const char *);
+void iap_dialog_unregister_service(const char *, const char *);
+
 struct iap_dialog_private_key_pw_data_t
 {
   DBusMessage *dbus_request;
@@ -9,21 +19,21 @@ typedef struct iap_dialog_private_key_pw_data_t iap_dialog_private_key_pw_data;
 
 iap_dialog_private_key_pw_data plugin_data;
 
-void
-g_module_unload()
+G_MODULE_EXPORT void
+g_module_unload(GModule *module G_GNUC_UNUSED)
 {
   iap_dialog_unregister_service(ICD_UI_DBUS_INTERFACE, ICD_UI_DBUS_PATH);
 }
 
-int
-g_module_check_init()
+G_MODULE_EXPORT int
+g_module_check_init(GModule *module G_GNUC_UNUSED)
 {
   iap_dialog_register_service(ICD_UI_DBUS_INTERFACE, ICD_UI_DBUS_PATH);
 
   return 0;
 }
 
-gboolean
+G_MODULE_EXPORT gboolean
 iap_dialogs_plugin_match(DBusMessage *message)
 {
   return dbus_message_is_method_call(message, ICD_UI_DBUS_INTERFACE,
@@ -54,7 +64,7 @@ iap_dialog_private_key_pw_send_reply(gboolean ok, const char *destination,
   if (!dbus_message_append_args(signal,
                                 DBUS_TYPE_STRING, &buf,
                                 DBUS_TYPE_STRING, &password,
-                                DBUS_TYPE_BOOL, &ok,
+                                DBUS_TYPE_BOOLEAN, &ok,
                                 NULL))
   {
     syslog(11, "could not append args to priv key reply");
@@ -107,7 +117,7 @@ iap_dialog_private_key_pw_cancel(DBusMessage *message)
                                               key_id, "");
 }
 
-gboolean
+G_MODULE_EXPORT gboolean
 iap_dialogs_plugin_cancel(DBusMessage *message)
 {
   return iap_dialog_private_key_pw_cancel(message);
@@ -137,7 +147,7 @@ iap_dialog_private_key_pw_response(maemosec_key_id cert_id, EVP_PKEY *key,
 static gboolean
 iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
                                void (*showing)(DBusMessage *),
-                               void (*done)(void *, gboolean), int libosso)
+                               void (*done)(void *, gboolean), void *libosso)
 {
   maemosec_key_id key_id;
   DBusError error;
@@ -182,10 +192,10 @@ iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
   return TRUE;
 }
 
-gboolean
+G_MODULE_EXPORT gboolean
 iap_dialogs_plugin_show(void *iap_id, DBusMessage *message,
                         void (*showing)(DBusMessage *),
-                        void (*done)(void *, gboolean), int libosso)
+                        void (*done)(void *, gboolean), void *libosso)
 {
   return
       iap_dialog_private_key_pw_show(iap_id, message, showing, done, libosso);
