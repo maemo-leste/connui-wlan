@@ -130,9 +130,8 @@ iap_dialog_private_key_pw_response(maemosec_key_id cert_id, EVP_PKEY *key,
   iap_dialog_private_key_pw_data *data =
       (iap_dialog_private_key_pw_data *)user_data;
 
-  g_return_if_fail(data != NULL);
-  /* FIXME - why not freeing it if data is NULL? */
   g_free(key);
+  g_return_if_fail(data != NULL);
 
   data->done_cb(data->iap_id, 0);
 
