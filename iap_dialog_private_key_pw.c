@@ -46,7 +46,8 @@ iap_dialog_private_key_pw_send_reply(gboolean ok, const char *destination,
                                      const char *password)
 {
   DBusMessage *signal;
-  char buf[41];
+  char buf[MAEMOSEC_KEY_ID_STR_LEN];
+  const char *buf_ptr = buf;
 
   signal = dbus_message_new_signal(ICD_UI_DBUS_PATH, ICD_UI_DBUS_INTERFACE,
                                    ICD_UI_PRIVATE_KEY_PASSWD_SIG);
@@ -62,13 +63,12 @@ iap_dialog_private_key_pw_send_reply(gboolean ok, const char *destination,
   }
 
   if (!dbus_message_append_args(signal,
-                                DBUS_TYPE_STRING, &buf,
+                                DBUS_TYPE_STRING, &buf_ptr,
                                 DBUS_TYPE_STRING, &password,
                                 DBUS_TYPE_BOOLEAN, &ok,
-                                NULL))
+                                DBUS_TYPE_INVALID))
   {
     syslog(11, "could not append args to priv key reply");
-    dbus_message_unref(signal);
 
     goto error;
   }
