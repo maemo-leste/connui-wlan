@@ -185,8 +185,14 @@ iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
     return FALSE;
   }
 
-  certmanui_get_privatekey(0, key_id, 0, iap_dialog_private_key_pw_response,
-                           &plugin_data);
+  if (!certmanui_get_privatekey(NULL, key_id, NULL,
+                                iap_dialog_private_key_pw_response,
+                                &plugin_data))
+  {
+    syslog(11, "Unable to get private key for certificate '%s'!", from_str);
+    iap_dialog_private_key_pw_response(key_id, NULL, NULL, &plugin_data);
+    return FALSE;
+  }
 
   return TRUE;
 }
