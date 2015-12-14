@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
+export CFLAGS=-O2 -g -Werror
 build:
 	dh_testdir
 	$(MAKE)
@@ -17,6 +18,7 @@ binary:
 	$(MAKE) DESTDIR="$(CURDIR)/debian/connui-conndlgs-wlan" install
 	dh_installdocs -pconnui-conndlgs-wlan
 	dh_installchangelogs -pconnui-conndlgs-wlan
+	dh_strip
 	dh_compress
 	dh_fixperms
 	dh_installdeb
