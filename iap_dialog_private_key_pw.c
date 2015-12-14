@@ -4,9 +4,7 @@
 #include <libconnui.h>
 #include <maemosec_certman.h>
 #include <osso-applet-certman.h>
-
-void iap_dialog_register_service(const char *, const char *);
-void iap_dialog_unregister_service(const char *, const char *);
+#include <connui-conndlgs.h>
 
 struct iap_dialog_private_key_pw_data_t
 {
