@@ -1,10 +1,11 @@
 #include <glib.h>
-#include <dbus/dbus.h>
 #include <icd/osso-ic-ui-dbus.h>
 #include <libconnui.h>
 #include <maemosec_certman.h>
 #include <osso-applet-certman.h>
 #include <connui-conndlgs.h>
+
+IAP_DIALOG_DEFINE(private_key_pw, ICD_UI_SHOW_PRIVATE_KEY_PASSWD_REQ);
 
 struct iap_dialog_private_key_pw_data_t
 {
@@ -16,27 +17,6 @@ struct iap_dialog_private_key_pw_data_t
 typedef struct iap_dialog_private_key_pw_data_t iap_dialog_private_key_pw_data;
 
 iap_dialog_private_key_pw_data plugin_data;
-
-G_MODULE_EXPORT void
-g_module_unload(GModule *module G_GNUC_UNUSED)
-{
-  iap_dialog_unregister_service(ICD_UI_DBUS_INTERFACE, ICD_UI_DBUS_PATH);
-}
-
-G_MODULE_EXPORT int
-g_module_check_init(GModule *module G_GNUC_UNUSED)
-{
-  iap_dialog_register_service(ICD_UI_DBUS_INTERFACE, ICD_UI_DBUS_PATH);
-
-  return 0;
-}
-
-G_MODULE_EXPORT gboolean
-iap_dialogs_plugin_match(DBusMessage *message)
-{
-  return dbus_message_is_method_call(message, ICD_UI_DBUS_INTERFACE,
-                                     ICD_UI_SHOW_PRIVATE_KEY_PASSWD_REQ);
-}
 
 static gboolean
 iap_dialog_private_key_pw_send_reply(gboolean ok, const char *destination,
@@ -115,12 +95,6 @@ iap_dialog_private_key_pw_cancel(DBusMessage *message)
                                               key_id, "");
 }
 
-G_MODULE_EXPORT gboolean
-iap_dialogs_plugin_cancel(DBusMessage *message)
-{
-  return iap_dialog_private_key_pw_cancel(message);
-}
-
 static void
 iap_dialog_private_key_pw_response(maemosec_key_id cert_id, EVP_PKEY *key,
                                    gchar *password, gpointer user_data)
@@ -193,13 +167,4 @@ iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
   }
 
   return TRUE;
-}
-
-G_MODULE_EXPORT gboolean
-iap_dialogs_plugin_show(void *iap_id, DBusMessage *message,
-                        void (*showing)(DBusMessage *),
-                        void (*done)(void *, gboolean), void *libosso)
-{
-  return
-      iap_dialog_private_key_pw_show(iap_id, message, showing, done, libosso);
 }
