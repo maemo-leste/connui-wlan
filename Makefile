@@ -11,4 +11,4 @@ clean:
 	$(RM) $(CLIBS)
 
 lib%.so: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs hildon-1 dbus-1 maemosec-certman maemosec-certman-applet libconnui) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs gconf-2.0 hildon-1 dbus-1 maemosec-certman maemosec-certman-applet libconnui) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@
