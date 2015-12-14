@@ -1,6 +1,6 @@
 Source: connui-wlan
 Maintainer: Mikko Mehtonen <ext-mikko.j.mehtonen@nokia.com>
-Build-Depends: debhelper (>= 5), libhildon1-dev, libosso-dev, libconnui-dev, libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev, libssl-dev
+Build-Depends: debhelper (>= 5), libhildon1-dev, libosso-dev, libconnui-dev, libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev, libssl-dev, connui-conndlgs-dev
 
 Package: connui-conndlgs-wlan
 Section: x11
