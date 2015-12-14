@@ -7,7 +7,7 @@
 #include <hildon/hildon-dialog.h>
 #include <libintl.h>
 
-IAP_DIALOG_DEFINE(gtc_challenge, ICD_UI_SHOW_GTC_REQ);
+IAP_DIALOGS_PLUGIN_DEFINE(gtc_challenge, ICD_UI_SHOW_GTC_REQ);
 
 struct iap_dialog_gtc_challenge_data_t
 {
@@ -107,9 +107,12 @@ iap_dialog_gtc_challenge_show(void *iap_id, DBusMessage *message,
 
   dbus_error_init(&error);
 
-  if (!dbus_message_get_args(message, &error, 'a', 'y', &str, &n, 0))
+  if (!dbus_message_get_args(message, &error,
+                             DBUS_TYPE_ARRAY, DBUS_TYPE_BYTE, &str, &n,
+                             DBUS_TYPE_INVALID))
   {
-    syslog(11, "iap_dialog_gtc_challenge_show(): could not get arguments: %s", error.message);
+    syslog(11, "iap_dialog_gtc_challenge_show(): could not get arguments: %s",
+           error.message);
     dbus_error_free(&error);
 
     return FALSE;

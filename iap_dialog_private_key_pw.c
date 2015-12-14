@@ -5,7 +5,7 @@
 #include <osso-applet-certman.h>
 #include <connui-conndlgs.h>
 
-IAP_DIALOG_DEFINE(private_key_pw, ICD_UI_SHOW_PRIVATE_KEY_PASSWD_REQ);
+IAP_DIALOGS_PLUGIN_DEFINE(private_key_pw, ICD_UI_SHOW_PRIVATE_KEY_PASSWD_REQ);
 
 struct iap_dialog_private_key_pw_data_t
 {
