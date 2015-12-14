@@ -1,5 +1,5 @@
-CLIBS := libiap_dialog_private_key_pw.so libiap_dialog_gtc_challenge.so
-LIBS := libiap_dialog_mschap_change.so libiap_dialog_server_cert.so libiap_dialog_wps.so $(CLIBS)
+CLIBS := libiap_dialog_private_key_pw.so libiap_dialog_gtc_challenge.so libiap_dialog_server_cert.so
+LIBS := libiap_dialog_mschap_change.so libiap_dialog_wps.so $(CLIBS)
 
 all: $(LIBS)
 
