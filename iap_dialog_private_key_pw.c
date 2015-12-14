@@ -16,7 +16,7 @@ struct iap_dialog_private_key_pw_data_t
 
 typedef struct iap_dialog_private_key_pw_data_t iap_dialog_private_key_pw_data;
 
-iap_dialog_private_key_pw_data plugin_data;
+static iap_dialog_private_key_pw_data plugin_data;
 
 static gboolean
 iap_dialog_private_key_pw_send_reply(gboolean ok, const char *destination,
