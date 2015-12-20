@@ -1,12 +1,12 @@
-Source: connui-wlan
-Maintainer: Mikko Mehtonen <ext-mikko.j.mehtonen@nokia.com>
-Build-Depends: debhelper (>= 5), libhildon1-dev, libosso-dev, libconnui-dev, libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev, libssl-dev, connui-conndlgs-dev
-
-Package: connui-conndlgs-wlan
+Source: connui-conndlgs-wlan
 Section: x11
 Priority: optional
+Maintainer: Pali Rohár <pali.rohar@gmail.com>
+Build-Depends: debhelper (>= 5), libdbus-1-dev, libhildon1-dev, libconnui-dev (>= 0.3), libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev, connui-conndlgs-dev
+
+Package: connui-conndlgs-wlan
 Architecture: armel
-Depends: ${shlibs:Depends}, connui-iapsettings, libconbtui0, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0, libconnui
+Depends: ${shlibs:Depends}, connui-iapsettings, connui-conndlgs, libconnui, libconbtui0, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0
 Description: Connectivity WLAN Dialogs
  This package provides the Connectivity Dialogs for WLAN that are activated
  via Conndlgs daemon.

@@ -1,3 +1,10 @@
+connui-conndlgs-wlan (2.46+0cssu1) unstable; urgency=low
+
+  * Do not freeze Internet Connections select dialog after closing EAP-TLS password dialog
+    Fixes bug: https://bugs.maemo.org/show_bug.cgi?id=11243
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sun, 20 Dec 2015 12:30:37 +0100
+
 connui-wlan (2.45+0m5) unstable; urgency=low
 
   * This entry has been added by BIFH queue processor
