@@ -163,7 +163,7 @@ iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
   {
     syslog(11, "Unable to get private key for certificate '%s'!", from_str);
     iap_dialog_private_key_pw_response(key_id, NULL, NULL, &plugin_data);
-    return FALSE;
+    return TRUE;
   }
 
   return TRUE;
