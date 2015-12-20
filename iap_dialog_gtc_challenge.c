@@ -1,7 +1,6 @@
+#include <string.h>
 #include <glib.h>
 #include <libconnui.h>
-#include <maemosec_certman.h>
-#include <osso-applet-certman.h>
 #include <connui-conndlgs.h>
 #include <hildon/hildon-caption.h>
 #include <hildon/hildon-dialog.h>
