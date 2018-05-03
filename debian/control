@@ -1,12 +1,40 @@
-Source: connui-conndlgs-wlan
+Source: connui-wlan
 Section: x11
 Priority: optional
 Maintainer: Pali Rohár <pali.rohar@gmail.com>
 Build-Depends: debhelper (>= 5), libdbus-1-dev, libhildon1-dev, libconnui-dev (>= 2.88), connui-iapsettings-dev (>= 2.78), libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev
 
 Package: connui-conndlgs-wlan
-Architecture: armel
+Architecture: any
 Depends: ${shlibs:Depends}, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0
 Description: Connectivity WLAN Dialogs
  This package provides the Connectivity Dialogs for WLAN that are activated
  via Conndlgs daemon.
+
+Package: connui-conndlgs-wlan-dbg
+Architecture: any
+Section: devel
+Depends: ${misc:Depends}, connui-conndlgs-wlan (= ${binary:Version})
+Description: Connectivity WLAN Dialogs
+ This package provides the Connectivity Dialogs for WLAN that are activated
+ via Conndlgs daemon.
+ .
+ This package contains the debug symbols.
+
+Package: connui-iapsettings-wlan
+Architecture: any
+Section: x11
+Depends: ${shlibs:Depends}, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0
+Description: Internet Settings UI for WLAN IAPs
+ This package provides the Internet Settings UI plugin that allows you to
+ create, edit and delete WLAN Internet Access Point configurations.
+
+Package: connui-iapsettings-wlan-dbg
+Architecture: any
+Section: devel
+Depends: ${shlibs:Depends}, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0
+Description: Internet Settings UI for WLAN IAPs
+ This package provides the Internet Settings UI plugin that allows you to
+ create, edit and delete WLAN Internet Access Point configurations.
+ .
+ This package contains the debug symbols.

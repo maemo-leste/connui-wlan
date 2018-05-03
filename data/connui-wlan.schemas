@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<gconfschemafile>
+	<schemalist>
+		<schema>
+			<key>/schemas/system/osso/connectivity/ui/auto_connect/60_wlan/label</key>
+			<applyto>/system/osso/connectivity/ui/auto_connect/60_wlan/label</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>conn_set_fi_conn_set_wlan</default>
+			<locale name="C"><short>Auto connect WLAN option label</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/ui/auto_connect/60_wlan/not_found_banner</key>
+			<applyto>/system/osso/connectivity/ui/auto_connect/60_wlan/not_found_banner</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>conn_ib_net_no_saved_wlan_iaps</default>
+			<locale name="C"><short>Auto connect WLAN option not found banner</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/ui/auto_connect/60_wlan/gettext_catalog</key>
+			<applyto>/system/osso/connectivity/ui/auto_connect/60_wlan/gettext_catalog</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>osso-connectivity-ui</default>
+			<locale name="C"><short>Auto connect WLAN option gettext catalog</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/ui/auto_connect/60_wlan/network_types</key>
+			<applyto>/system/osso/connectivity/ui/auto_connect/60_wlan/network_types</applyto>
+			<owner>connui-wlan</owner>
+			<type>list</type>
+			<list_type>string</list_type>
+			<default>[WLAN_INFRA]</default>
+			<locale name="C"><short>Auto connect WLAN option network types</short></locale>
+		</schema>
+
+<!-- WLAN_INFRA network type -->
+
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/icon_name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/icon_name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>general_wlan</default>
+			<locale name="C"><short>Infrastructure WLAN icon name</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_0</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_0</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>statusarea_internetconnection_no</default>
+			<locale name="C"><short>Infrastructure WLAN icon name with signal strength 1</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_1</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_1</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>connectivity_wlan_signal_fair</default>
+			<locale name="C"><short>Infrastructure WLAN icon name with signal strength 1</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_2</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_2</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>connectivity_wlan_signal_fair</default>
+			<locale name="C"><short>Infrastructure WLAN icon name with signal strength 2</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_3</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_3</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>connectivity_wlan_signal_good</default>
+			<locale name="C"><short>Infrastructure WLAN icon name with signal strength 3</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_4</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/icon_name_signal_4</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>general_wlan</default>
+			<locale name="C"><short>Infrastructure WLAN icon name with signal strength 4</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/statusbar_icon_name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/statusbar_icon_name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>general_wlan</default>
+			<locale name="C"><short>Infrastructure WLAN statusbar icon name</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/statusbar_dimmed_icon_name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/statusbar_dimmed_icon_name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>statusarea_internetconnection_no</default>
+			<locale name="C"><short>Infrastructure WLAN dimmed statusbar icon name</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>conn_mngr_fi_type_wlan</default>
+			<locale name="C"><short>Infrastructure WLAN human readable name</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_INFRA/gettext_catalog</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_INFRA/gettext_catalog</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>osso-connectivity-ui</default>
+			<locale name="C"><short>Infrastructure WLAN human readable name gettext catalog</short></locale>
+		</schema>
+
+<!-- WLAN_ADHOC network type -->
+
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>general_adhocwlan</default>
+			<locale name="C"><short>Adhoc WLAN icon name</short></locale>
+		</schema>
+<!-- Not sure if these should be used, so disabled for now...
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_1</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_1</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>connect_manager_wlan_signal_weak</default>
+			<locale name="C"><short>Adhoc WLAN icon name with signal strength 1</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_2</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_2</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>connect_manager_wlan_signal_fair</default>
+			<locale name="C"><short>Adhoc WLAN icon name with signal strength 2</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_3</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_3</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>connect_manager_wlan_signal_good</default>
+			<locale name="C"><short>Adhoc WLAN icon name with signal strength 3</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_4</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/icon_name_signal_4</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>connect_manager_wlan_signal_exellent</default>
+			<locale name="C"><short>Adhoc WLAN icon name with signal strength 4</short></locale>
+		</schema>
+-->
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/statusbar_icon_name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/statusbar_icon_name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>general_adhocwlan</default>
+			<locale name="C"><short>Infrastructure WLAN statusbar icon name</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/statusbar_dimmed_icon_name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/statusbar_dimmed_icon_name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>statusarea_internetconnection_no</default>
+			<locale name="C"><short>Infrastructure WLAN statusbar dimmed icon name</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/name</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/name</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>conn_mngr_fi_type_wlan_adhoc</default>
+			<locale name="C"><short>Adhoc WLAN human readable name</short></locale>
+		</schema>
+		<schema>
+			<key>/schemas/system/osso/connectivity/network_type/WLAN_ADHOC/gettext_catalog</key>
+			<applyto>/system/osso/connectivity/network_type/WLAN_ADHOC/gettext_catalog</applyto>
+			<owner>connui-wlan</owner>
+			<type>string</type>
+			<default>osso-connectivity-ui</default>
+			<locale name="C"><short>Adhoc WLAN human readable name gettext catalog</short></locale>
+		</schema>
+
+	</schemalist>
+</gconfschemafile>

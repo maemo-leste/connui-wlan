@@ -3,6 +3,7 @@
 #include <connui/connui.h>
 #include <connui/connui-conndlgs.h>
 #include <connui/connui-dbus.h>
+#include <connui/wlan-common.h>
 #include <connui/iapsettings/widgets.h>
 #include <hildon/hildon-caption.h>
 #include <hildon/hildon-dialog.h>
