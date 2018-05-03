@@ -1,5 +1,6 @@
-#include <libconnui.h>
-#include <connui-conndlgs.h>
+#include <connui/connui.h>
+#include <connui/connui-conndlgs.h>
+#include <connui/connui-dbus.h>
 #include <osso-applet-certman.h>
 
 IAP_DIALOGS_PLUGIN_DEFINE(server_cert, ICD_UI_SHOW_SERVER_CERT_REQ);
@@ -7,8 +8,8 @@ IAP_DIALOGS_PLUGIN_DEFINE(server_cert, ICD_UI_SHOW_SERVER_CERT_REQ);
 struct iap_dialog_server_cert_data_t
 {
   DBusMessage *dbus_request;
-  void (*done_cb)(void *, gboolean);
-  void *iap_id;
+  iap_dialogs_done_fn done_cb;
+  int iap_id;
 };
 
 typedef struct iap_dialog_server_cert_data_t iap_dialog_server_cert_data;
@@ -54,10 +55,10 @@ static void expired_cb(gboolean expired, gpointer user_data)
 }
 
 static gboolean
-iap_dialog_server_cert_show(void *iap_id, DBusMessage *message,
-                            void (*showing)(DBusMessage *),
-                            void (*done)(void *, gboolean),
-                            void *libosso G_GNUC_UNUSED)
+iap_dialog_server_cert_show(int iap_id, DBusMessage *message,
+                            iap_dialogs_showing_fn showing,
+                            iap_dialogs_done_fn done,
+                            osso_context_t *libosso G_GNUC_UNUSED)
 {
   CertmanUIExpiredDialogType dialog_type;
   DBusError error;
@@ -86,7 +87,9 @@ iap_dialog_server_cert_show(void *iap_id, DBusMessage *message,
   plugin_data.done_cb = done;
   plugin_data.iap_id = iap_id;
 
-  showing(dbus_message_ref(message));
+  dbus_message_ref(message);
+
+  showing();
 
   if (expired && self_signed)
     dialog_type = CERTMANUI_EXPIRED_DIALOG_NOCA_EXPIRED;

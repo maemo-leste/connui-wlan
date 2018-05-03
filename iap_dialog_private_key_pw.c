@@ -1,17 +1,19 @@
 #include <glib.h>
 #include <icd/osso-ic-ui-dbus.h>
-#include <libconnui.h>
+#include <connui/connui.h>
+#include <connui/connui-dbus.h>
+#include <connui/connui-log.h>
+#include <connui/connui-conndlgs.h>
 #include <maemosec_certman.h>
 #include <osso-applet-certman.h>
-#include <connui-conndlgs.h>
 
 IAP_DIALOGS_PLUGIN_DEFINE(private_key_pw, ICD_UI_SHOW_PRIVATE_KEY_PASSWD_REQ);
 
 struct iap_dialog_private_key_pw_data_t
 {
   DBusMessage *dbus_request;
-  void (*done_cb)(void *, gboolean);
-  void *iap_id;
+  iap_dialogs_done_fn done_cb;
+  int iap_id;
 };
 
 typedef struct iap_dialog_private_key_pw_data_t iap_dialog_private_key_pw_data;
@@ -116,9 +118,10 @@ iap_dialog_private_key_pw_response(maemosec_key_id cert_id, EVP_PKEY *key,
 }
 
 static gboolean
-iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
-                               void (*showing)(DBusMessage *),
-                               void (*done)(void *, gboolean), void *libosso)
+iap_dialog_private_key_pw_show(int iap_id, DBusMessage *message,
+                               iap_dialogs_showing_fn showing,
+                               iap_dialogs_done_fn done,
+                               osso_context_t *libosso)
 {
   maemosec_key_id key_id;
   DBusError error;
@@ -134,8 +137,7 @@ iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
                              DBUS_TYPE_STRING, &from_str,
                              NULL))
   {
-    syslog(11, "iap_dialog_private_key_pw_show(): could not get arguments : %s",
-           error.message);
+    CONNUI_ERR("could not get arguments : %s", error.message);
     dbus_error_free(&error);
 
     return FALSE;
@@ -145,7 +147,9 @@ iap_dialog_private_key_pw_show(void *iap_id, DBusMessage *message,
   plugin_data.done_cb = done;
   plugin_data.iap_id = iap_id;
 
-  showing(dbus_message_ref(message));
+  dbus_message_ref(message);
+
+  showing();
 
   if (maemosec_certman_str_to_key_id(from_str, key_id))
   {

@@ -11,10 +11,10 @@ clean:
 	$(RM) $(CLIBS)
 
 libiap_dialog_private_key_pw.so: iap_dialog_private_key_pw.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs dbus-1 maemosec-certman maemosec-certman-applet libconnui) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs dbus-1 maemosec-certman maemosec-certman-applet connui) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@
 
 libiap_dialog_gtc_challenge.so: iap_dialog_gtc_challenge.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs dbus-1 hildon-1 libconnui_iapsettings) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs dbus-1 hildon-1 gconf-2.0 connui-iapsettings) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@
 
 libiap_dialog_server_cert.so: iap_dialog_server_cert.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs dbus-1 maemosec-certman-applet libconnui) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(shell pkg-config --cflags --libs dbus-1 connui) -W -Wall -O2 -shared -Wl,-soname,$@ $^ -o $@

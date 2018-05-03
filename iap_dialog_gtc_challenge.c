@@ -1,7 +1,9 @@
 #include <string.h>
 #include <glib.h>
-#include <libconnui.h>
-#include <connui-conndlgs.h>
+#include <connui/connui.h>
+#include <connui/connui-conndlgs.h>
+#include <connui/connui-dbus.h>
+#include <connui/iapsettings/widgets.h>
 #include <hildon/hildon-caption.h>
 #include <hildon/hildon-dialog.h>
 #include <libintl.h>
@@ -12,8 +14,8 @@ struct iap_dialog_gtc_challenge_data_t
 {
   GtkWidget *entry;
   DBusMessage *dbus_request;
-  void (*done_cb)(void *, gboolean);
-  void *iap_id;
+  iap_dialogs_done_fn done_cb;
+  int iap_id;
 };
 
 typedef struct iap_dialog_gtc_challenge_data_t iap_dialog_gtc_challenge_data;
@@ -86,10 +88,10 @@ response_cb(GtkDialog *dialog, gint arg1, iap_dialog_gtc_challenge_data *data)
 }
 
 static gboolean
-iap_dialog_gtc_challenge_show(void *iap_id, DBusMessage *message,
-                              void (*showing)(DBusMessage *),
-                              void (*done)(void *, gboolean),
-                              void *libosso G_GNUC_UNUSED)
+iap_dialog_gtc_challenge_show(int iap_id, DBusMessage *message,
+                              iap_dialogs_showing_fn showing,
+                              iap_dialogs_done_fn done,
+                              osso_context_t *libosso G_GNUC_UNUSED)
 {
   gchar *title;
   GtkWidget *label;
@@ -120,7 +122,10 @@ iap_dialog_gtc_challenge_show(void *iap_id, DBusMessage *message,
   plugin_data.iap_id = iap_id;
   plugin_data.dbus_request = message;
   plugin_data.done_cb = done;
-  showing(dbus_message_ref(message));
+
+  dbus_message_ref(message);
+
+  showing();
 
   vbox = gtk_vbox_new(0, 0);
 
