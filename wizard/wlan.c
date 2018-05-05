@@ -728,6 +728,84 @@ wlan_scan_get_page(gpointer user_data, gboolean show_note)
 }
 
 static void
+scan_started(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *dialog = iap_wizard_get_dialog(priv->iw);
+
+  if (dialog)
+    hildon_gtk_window_set_progress_indicator(GTK_WINDOW(dialog), TRUE);
+}
+
+static gboolean
+scan_network_added(connui_scan_entry *scan_entry, gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  gchar *network_type = scan_entry->network.network_type;
+  gchar *network_id;
+  GtkTreeView *tree_view;
+
+  if (!network_type)
+    return FALSE;
+
+  if (strncmp(network_type, "WLAN_", 5))
+    return FALSE;
+
+  network_id = scan_entry->network.network_id;
+
+  if (!network_id || !*network_id ||
+      (scan_entry->network.service_type && *scan_entry->network.service_type))
+  {
+    return FALSE;
+  }
+
+  if (!priv->no_conn_avail)
+    return TRUE;
+
+  tree_view = GTK_TREE_VIEW(g_hash_table_lookup(priv->plugin->widgets,
+                                                "SCAN_VIEW"));
+  gtk_list_store_remove(GTK_LIST_STORE(gtk_tree_view_get_model(tree_view)),
+                        &priv->iter);
+  gtk_widget_set_sensitive(GTK_WIDGET(tree_view), TRUE);
+  priv->no_conn_avail = FALSE;
+  return TRUE;
+}
+
+static void
+display_event_cb(osso_display_state_t state, gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  gchar *network_types[] = {"WLAN_INFRA", "WLAN_ADHOC", NULL};
+
+  if (!priv)
+    return;
+
+  if (state == OSSO_DISPLAY_OFF)
+  {
+    scan_cancel(priv);
+    iap_scan_close();
+  }
+  else if (state == OSSO_DISPLAY_ON &&
+           priv->display_prev_state == OSSO_DISPLAY_OFF)
+  {
+    GtkTreeView *tree_view =
+        GTK_TREE_VIEW(g_hash_table_lookup(priv->plugin->widgets, "SCAN_VIEW"));
+
+    gtk_widget_set_sensitive(GTK_WIDGET(tree_view), OSSO_DISPLAY_OFF);
+    gtk_list_store_clear(GTK_LIST_STORE(gtk_tree_view_get_model(tree_view)));
+    priv->no_conn_avail = FALSE;
+
+    if (!iap_scan_start_for_network_types(network_types, 0, scan_started,
+                                          scan_cancel, scan_network_added,
+                                          GTK_WIDGET(tree_view),
+                                          NULL, NULL, priv))
+      scan_cancel(priv);
+  }
+
+  priv->display_prev_state = state;
+}
+
+static void
 wlan_scan_finish(gpointer user_data)
 {
   wlan_plugin_private *priv = user_data;
@@ -736,14 +814,10 @@ wlan_scan_finish(gpointer user_data)
                                                  PACKAGE_VERSION);
   if (priv->osso)
   {
-    if (priv->iw)
+    if (priv->iw && priv->iw->osso)
     {
-      if ( priv->iw->osso )
-      {
-        priv->display_prev_state = OSSO_DISPLAY_OFF;
-        osso_hw_set_display_event_cb(priv->osso,
-                                     display_event_cb, priv);
-      }
+      priv->display_prev_state = OSSO_DISPLAY_OFF;
+      osso_hw_set_display_event_cb(priv->osso, display_event_cb, priv);
     }
   }
   else
