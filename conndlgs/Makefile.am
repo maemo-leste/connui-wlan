@@ -1,5 +1,5 @@
 AM_CFLAGS = -Wall -Werror $(HILDON_CFLAGS) $(CONNUI_CFLAGS) \
-	    -DG_LOG_DOMAIN=\"$(PACKAGE)\"
+	    -DG_LOG_DOMAIN=\"$(PACKAGE)\" -DOSSOLOG_COMPILE=1
 AM_LDFLAGS = $(HILDON_LIBS) $(CONNUI_LIBS) -module -avoid-version -Wl, no-undefined
 
 conndlgslib_LTLIBRARIES = \
