@@ -2,10 +2,11 @@
 #include <connui/connui-log.h>
 #include <connui/wlan-common.h>
 #include <connui/libicd-network-wlan-dev.h>
-#include <connui/iapsettings/wizard.h>
 #include <connui/iapsettings/stage.h>
 #include <connui/iapsettings/mapper.h>
 #include <connui/iapsettings/widgets.h>
+#include <connui/iapsettings/wizard.h>
+#include <icd/osso-ic-gconf.h>
 
 #include <string.h>
 #include <libintl.h>
@@ -824,6 +825,71 @@ wlan_scan_finish(gpointer user_data)
     CONNUI_ERR("Couldn't init osso context");
 }
 
+static const char *wepk_data[] =
+{
+  "conn_set_iap_fi_wlan_wepk_data1",
+  "conn_set_iap_fi_wlan_wepk_data2",
+  "conn_set_iap_fi_wlan_wepk_data3",
+  "conn_set_iap_fi_wlan_wepk_data4"
+};
+
+static GtkWidget *
+wlan_wep_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  int i;
+  GtkWidget *combo_box;
+  GtkWidget *caption;
+  GtkWidget *vbox;
+  GtkSizeGroup *group;
+  GtkWidget *dialog;
+
+  dialog = iap_wizard_get_dialog(priv->iw);
+  vbox = gtk_vbox_new(0, 0);
+  group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+  combo_box = iap_widgets_create_static_combo_box(
+        _("conn_set_iap_fi_wlan_wepk_ind_value1"),
+        _("conn_set_iap_fi_wlan_wepk_ind_value2"),
+        _("conn_set_iap_fi_wlan_wepk_ind_value3"),
+        _("conn_set_iap_fi_wlan_wepk_ind_value4"),
+        NULL);
+
+  g_signal_connect(G_OBJECT(combo_box), "changed",
+                   G_CALLBACK(wlan_manual_ssid_entry_changed_cb), priv);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_WEP_DEF_KEY"),
+                                                      combo_box);
+  caption = hildon_caption_new(group, _("conn_set_iap_fi_wlan_wepk_ind"),
+                               combo_box, NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  for (i = 0; i < G_N_ELEMENTS(wepk_data); i++)
+  {
+    HildonGtkInputMode im;
+    GtkWidget *entry = gtk_entry_new();
+
+    im = hildon_gtk_entry_get_input_mode(GTK_ENTRY(entry));
+    im &= ~(HILDON_GTK_INPUT_MODE_AUTOCAP | HILDON_GTK_INPUT_MODE_DICTIONARY);
+    im |= HILDON_GTK_INPUT_MODE_INVISIBLE;
+    hildon_gtk_entry_set_input_mode(GTK_ENTRY(entry), im);
+    g_object_set(G_OBJECT(entry), "max-length", 26, NULL);
+    g_signal_connect(G_OBJECT(entry), "insert_text",
+                     G_CALLBACK(iap_widgets_insert_only_ascii_text), dialog);
+    g_signal_connect(G_OBJECT(entry), "insert-text",
+                     G_CALLBACK(iap_widgets_insert_text_maxval_reach), dialog);
+    g_signal_connect(G_OBJECT(entry), "changed",
+                     G_CALLBACK(wlan_manual_ssid_entry_changed_cb), priv);
+    g_hash_table_insert(priv->plugin->widgets,
+                        g_strdup_printf("WLAN_WEP_KEY%d", i), entry);
+    caption = hildon_caption_new(group, _(wepk_data[i]), entry, NULL,
+                                 HILDON_CAPTION_OPTIONAL);
+    gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+  }
+
+  g_object_unref(G_OBJECT(group));
+
+  return vbox;
+}
+
 struct iap_wizard_page iap_wizard_wlan_pages[] =
 {
   {
@@ -848,7 +914,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupscannedWLANs",
     NULL
   },
-/*  {
+  {
     "WLAN_WEP",
     "conn_set_iap_ti_wlan_wepkey",
     wlan_wep_create,
@@ -859,7 +925,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupWLANwepkey",
     NULL
   },
-  {
+/*  {
     "WLAN_WPA_PRESHARED",
     "conn_set_iap_ti_wlan_wpa_psk",
     wlan_wpa_preshared_create,
@@ -936,6 +1002,50 @@ iap_wizard_wlan_flightmode_status_cb(dbus_bool_t offline, gpointer user_data)
   priv->offline = offline;
 }
 
+static void
+iap_wizard_wlan_save_state(gpointer user_data, GByteArray *state)
+{
+  wlan_plugin_private *priv = user_data;
+
+  stage_dump_cache(&priv->stage[0], state);
+  stage_dump_cache(&priv->stage[1], state);
+}
+
+void
+iap_wizard_wlan_restore_state(gpointer user_data, struct stage_cache *s)
+{
+  wlan_plugin_private *priv = user_data;
+
+  if (stage_restore_cache(&priv->stage[0], s))
+    stage_restore_cache(&priv->stage[1], s);
+}
+
+static void
+iap_wizard_wlan_advanced_show(gpointer user_data, struct stage *s)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *widget;
+
+  widget = iap_wizard_get_widget(priv->iw, "WLAN_TX_POWER");
+
+  if (widget)
+  {
+    gint active;
+    GConfClient *gconf = gconf_client_get_default();
+    gint wlan_tx_power = gconf_client_get_int(gconf,
+                                              ICD_GCONF_PATH"/wlan_tx_power",
+                                              NULL);
+    g_object_unref(gconf);
+
+    if (wlan_tx_power == 4)
+      active = 0;
+    else
+      active = 1;
+
+    gtk_combo_box_set_active(GTK_COMBO_BOX(widget), active);
+  }
+}
+
 gboolean
 iap_wizard_plugin_init(struct iap_wizard *iw,
                        struct iap_wizard_plugin *plugin)
@@ -964,19 +1074,40 @@ iap_wizard_plugin_init(struct iap_wizard *iw,
 
   plugin->name = "WLAN";
   plugin->prio = 1000;
+  plugin->priv = priv;
 
 //  plugin->get_advanced = iap_wizard_wlan_get_advanced;
   plugin->stage_widgets = iap_wizard_wlan_widgets;
   plugin->pages = iap_wizard_wlan_pages;
-/*  plugin->get_widgets = iap_wizard_wlan_advanced_get_widgets;
+/*  plugin->get_widgets = iap_wizard_wlan_advanced_get_widgets;*/
   plugin->advanced_show = iap_wizard_wlan_advanced_show;
-  plugin->advanced_done = iap_wizard_wlan_advanced_done;
+/*  plugin->advanced_done = iap_wizard_wlan_advanced_done;*/
   plugin->save_state = iap_wizard_wlan_save_state;
-  plugin->priv = priv;
   plugin->restore = iap_wizard_wlan_restore_state;
-  plugin->get_page = iap_wizard_wlan_get_page;*/
+/*  plugin->get_page = iap_wizard_wlan_get_page;*/
   plugin->widgets =
       g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
   return TRUE;
+}
+
+void
+iap_wizard_plugin_destroy(struct iap_wizard *iw,
+                          struct iap_wizard_plugin *plugin)
+{
+  wlan_plugin_private *priv = (wlan_plugin_private *)plugin->priv;
+
+  connui_flightmode_close(iap_wizard_wlan_flightmode_status_cb);
+
+  if (priv && priv->osso)
+  {
+    osso_deinitialize(priv->osso);
+    priv->osso = NULL;
+  }
+
+  iap_scan_close();
+  stage_free(&priv->stage[0]);
+  stage_free(&priv->stage[1]);
+  g_hash_table_destroy(plugin->widgets);
+  g_free(plugin->priv);
 }
