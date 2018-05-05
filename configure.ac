@@ -16,6 +16,7 @@ AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([
 	Makefile
 	conndlgs/Makefile
+	wizard/Makefile
 	data/Makefile
 ])
 

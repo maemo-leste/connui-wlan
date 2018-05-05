@@ -1,3 +1,3 @@
-SUBDIRS = conndlgs data
+SUBDIRS = conndlgs wizard data
 
 MAINTAINERCLEANFILES = Makefile.in
