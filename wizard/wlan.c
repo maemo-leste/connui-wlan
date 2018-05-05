@@ -1,4 +1,7 @@
 #include <connui/connui.h>
+#include <connui/connui-log.h>
+#include <connui/wlan-common.h>
+#include <connui/libicd-network-wlan-dev.h>
 #include <connui/iapsettings/wizard.h>
 #include <connui/iapsettings/stage.h>
 #include <connui/iapsettings/mapper.h>
@@ -26,7 +29,7 @@ struct wlan_plugin_private_t
   struct stage stage[2];
   int active_stage;
   GtkTreeIter iter;
-  int field_54;
+  gboolean no_conn_avail;
   int powersave;
   gboolean initialized;
   gboolean offline;
@@ -572,6 +575,181 @@ wlan_manual_get_page(gpointer user_data, gboolean show_note)
   return result;
 }
 
+static void
+iap_wizard_wlan_tree_change(GtkTreeSelection *selection,
+                            wlan_plugin_private *priv)
+{
+  struct iap_wizard *iw = priv->iw;
+  dbus_uint32_t caps;
+  GtkTreeIter iter;
+  connui_scan_entry *scan_entry = NULL;
+  gchar *ssid;
+  GtkTreeModel *model;
+
+  if (!gtk_tree_selection_get_selected(selection, &model, &iter))
+    return;
+
+  gtk_tree_model_get(model, &iter,
+                     IAP_SCAN_LIST_SSID, &ssid,
+                     IAP_SCAN_LIST_SCAN_ENTRY, &scan_entry,
+                     -1);
+
+  if (scan_entry)
+    nwattr2cap(scan_entry->network.network_attributes, &caps);
+  else
+    caps = 0;
+
+  ULOG_DEBUG("iap_wizard_wlan_tree_change(): ssid '%s'", ssid);
+
+  if (ssid)
+  {
+    GtkWidget *widget = GTK_WIDGET(g_hash_table_lookup(priv->plugin->widgets,
+                                                       "WLAN_SSID"));
+    struct stage *s = iap_wizard_get_active_stage(iw);
+    int wlan_security;
+
+    stage_set_bytearray(s, "wlan_ssid", ssid);
+    gtk_widget_set_sensitive(widget,
+                             wlan_common_mangle_ssid(ssid, strlen(ssid)));
+    gtk_entry_set_text(GTK_ENTRY(widget), ssid);
+
+    widget = GTK_WIDGET(g_hash_table_lookup(priv->plugin->widgets,
+                                            "WLAN_MODE"));
+    gtk_combo_box_set_active(GTK_COMBO_BOX(widget), caps & WLANCOND_ADHOC);
+
+    if (caps & WLANCOND_WEP)
+      wlan_security = 1;
+    else if (caps & WLANCOND_WPA_PSK)
+      wlan_security = 2;
+    else if (caps & WLANCOND_WPA_EAP)
+      wlan_security = 3;
+    else
+      wlan_security = 0;
+
+    gtk_combo_box_set_active(
+          GTK_COMBO_BOX(g_hash_table_lookup(priv->plugin->widgets,
+                                            "WLAN_SECURITY")),
+          wlan_security);
+  }
+}
+
+static GtkWidget *
+wlan_scan_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *scan_tree;
+  GtkTreeSelection *selection;
+
+  scan_tree = iap_scan_tree_create(NULL, NULL);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("SCAN_VIEW"), scan_tree);
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(scan_tree));
+  g_signal_connect(G_OBJECT(selection), "changed",
+                   G_CALLBACK(iap_wizard_wlan_tree_change),priv);
+
+  return iap_scan_view_create(scan_tree);
+}
+
+static void
+scan_cancel(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *dialog;
+  GtkWidget *scan_view;
+  GtkTreeSelection *selection;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+
+  dialog = iap_wizard_get_dialog(priv->iw);
+
+  if (dialog)
+    hildon_gtk_window_set_progress_indicator(GTK_WINDOW(dialog), FALSE);
+
+  scan_view = GTK_WIDGET(g_hash_table_lookup(priv->plugin->widgets,
+                                             "SCAN_VIEW"));
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(scan_view));
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(scan_view));
+
+  if (!priv->no_conn_avail && !gtk_tree_model_get_iter_first(model, &iter))
+  {
+    gtk_list_store_append(GTK_LIST_STORE(model), &priv->iter);
+    gtk_list_store_set(GTK_LIST_STORE(model), &priv->iter,
+                       IAP_SCAN_LIST_SERVICE_TEXT,
+                       _("conn_fi_no_conn_available"),
+                       -1);
+    gtk_widget_set_sensitive(scan_view, FALSE);
+    priv->no_conn_avail = TRUE;
+  }
+
+  iap_wizard_wlan_tree_change(selection, priv);
+}
+
+static void
+wlan_scan_prev(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+
+  scan_cancel(priv);
+  iap_scan_close();
+
+  if (priv)
+  {
+    osso_deinitialize(priv->osso);
+    priv->osso = NULL;
+  }
+}
+
+const char *
+wlan_scan_get_page(gpointer user_data, gboolean show_note)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *scan_view;
+  GtkTreeSelection *selection;
+  GtkTreeIter iter;
+
+  scan_view = GTK_WIDGET(g_hash_table_lookup(priv->plugin->widgets,
+                                             "SCAN_VIEW"));
+
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(scan_view));
+
+  if (GTK_WIDGET_SENSITIVE(scan_view) &&
+      GTK_WIDGET_PARENT_SENSITIVE(scan_view) &&
+      gtk_tree_selection_get_selected(selection, NULL, &iter))
+  {
+    return wlan_manual_get_page(priv, show_note);
+  }
+
+  if (show_note)
+  {
+    wlan_scan_prev(priv);
+    iap_wizard_set_current_page(priv->iw, "WLAN_MANUAL");
+  }
+
+  return NULL;
+}
+
+static void
+wlan_scan_finish(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+
+  priv->osso = connui_utils_inherit_osso_context(priv->iw->osso, PACKAGE_NAME,
+                                                 PACKAGE_VERSION);
+  if (priv->osso)
+  {
+    if (priv->iw)
+    {
+      if ( priv->iw->osso )
+      {
+        priv->display_prev_state = OSSO_DISPLAY_OFF;
+        osso_hw_set_display_event_cb(priv->osso,
+                                     display_event_cb, priv);
+      }
+    }
+  }
+  else
+    CONNUI_ERR("Couldn't init osso context");
+}
+
 struct iap_wizard_page iap_wizard_wlan_pages[] =
 {
   {
@@ -585,7 +763,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupWLAN",
     NULL
   },
-/*  {
+  {
     "WLAN_SCAN",
     "conn_set_iap_ti_wlan_scanned",
     wlan_scan_create,
@@ -596,7 +774,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupscannedWLANs",
     NULL
   },
-  {
+/*  {
     "WLAN_WEP",
     "conn_set_iap_ti_wlan_wepkey",
     wlan_wep_create,
