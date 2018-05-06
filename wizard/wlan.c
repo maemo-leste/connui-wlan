@@ -977,6 +977,55 @@ wlan_wep_get_page(gpointer user_data, gboolean show_note)
   return NULL;
 }
 
+static GtkWidget *
+wlan_wpa_preshared_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *dialog = iap_wizard_get_dialog(priv->iw);
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *entry = gtk_entry_new();
+  HildonGtkInputMode im = hildon_gtk_entry_get_input_mode(GTK_ENTRY(entry));
+  GtkWidget *caption;
+
+  im &= ~(HILDON_GTK_INPUT_MODE_AUTOCAP | HILDON_GTK_INPUT_MODE_DICTIONARY);
+  im |= HILDON_GTK_INPUT_MODE_INVISIBLE;
+  hildon_gtk_entry_set_input_mode(GTK_ENTRY(entry), im);
+  g_object_set(G_OBJECT(entry), "max-length", 63, NULL);
+  g_signal_connect(G_OBJECT(entry), "insert_text",
+                   G_CALLBACK(iap_widgets_insert_only_ascii_text), dialog);
+  g_signal_connect(G_OBJECT(entry), "insert-text",
+                   G_CALLBACK(iap_widgets_insert_text_no_8bit_maxval_reach),
+                   dialog);
+  g_signal_connect(G_OBJECT(entry), "changed",
+                   G_CALLBACK(wlan_manual_ssid_entry_changed_cb), priv);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_WPA_KEY"), entry);
+  caption = hildon_caption_new(0, _("conn_set_iap_fi_wlan_wpa_psk_txt"), entry,
+                               NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  return vbox;
+}
+
+const char *
+wlan_wpa_preshared_get_page(gpointer user_data, gboolean show_note)
+{
+  wlan_plugin_private *priv = user_data;
+  gpointer widget = g_hash_table_lookup(priv->plugin->widgets, "WLAN_WPA_KEY");
+  const char *pwd = gtk_entry_get_text(GTK_ENTRY(widget));
+
+  if (pwd && strlen(pwd) > 7)
+    return "COMPLETE";
+
+  if (show_note)
+  {
+    hildon_banner_show_information(iap_wizard_get_dialog(priv->iw), NULL,
+                                   _("conn_ib_min8val_req"));
+    gtk_widget_grab_focus(GTK_WIDGET(widget));
+  }
+
+  return NULL;
+}
+
 struct iap_wizard_page iap_wizard_wlan_pages[] =
 {
   {
@@ -1012,7 +1061,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupWLANwepkey",
     NULL
   },
-/*  {
+  {
     "WLAN_WPA_PRESHARED",
     "conn_set_iap_ti_wlan_wpa_psk",
     wlan_wpa_preshared_create,
@@ -1023,7 +1072,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupWLANwpapsk",
     NULL
   },
-  {
+/*  {
     "WLAN_WPA_EAP",
     "conn_set_iap_ti_wlan_wpa_eap_type",
     wlan_wpa_eap_create,
