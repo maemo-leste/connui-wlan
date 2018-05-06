@@ -1750,6 +1750,111 @@ iap_wizard_wlan_advanced_get_widgets(gpointer user_data)
   return widgets;
 }
 
+static const char *
+iap_wizard_wlan_get_page(gpointer user_data, int index, gboolean show_note)
+{
+  wlan_plugin_private *priv = user_data;
+  struct stage *s;
+  GtkWidget *dialog;
+  gchar *type;
+  const char *page;
+
+  s = iap_wizard_get_active_stage(priv->iw);
+  dialog = iap_wizard_get_dialog(priv->iw);
+
+  if (!s && index == -1)
+    return NULL;
+
+  if (index != -1)
+  {
+    gpointer widget = iap_wizard_get_widget(priv->iw, "NAME");;
+    const char *name = gtk_entry_get_text(GTK_ENTRY(widget));;
+
+    if (name && *name && !iap_settings_is_empty(name))
+    {
+      gchar *wlan_ssid;
+
+      if (s)
+        wlan_ssid = stage_get_bytearray(s, "wlan_ssid");
+      else
+        wlan_ssid = NULL;
+
+      if ((wlan_ssid && *wlan_ssid) || !show_note)
+      {
+        if (!priv->active_stage)
+          page = "WLAN_SCAN";
+        else
+          page = "WLAN_MANUAL";
+      }
+      else if (show_note)
+      {
+        gint response_id;
+        GtkWidget *note;
+
+        priv->active_stage = 1;
+        page = "WLAN_MANUAL";
+
+        if (priv->offline)
+        {
+          note = hildon_note_new_information(GTK_WINDOW(dialog),
+                                            _("conn_set_iap_fi_scan_wlan_no"));
+          gtk_dialog_run(GTK_DIALOG(note));
+          gtk_widget_destroy(note);
+        }
+        else
+        {
+          note = hildon_note_new_confirmation(GTK_WINDOW(dialog),
+                                              _("conn_set_iap_fi_scan_wlan"));
+          response_id = gtk_dialog_run(GTK_DIALOG(note));
+          gtk_widget_destroy(note);
+
+          if (response_id == GTK_RESPONSE_OK)
+          {
+            priv->active_stage = 0;
+            page = "WLAN_SCAN";
+          }
+        }
+      }
+
+      g_free(wlan_ssid);
+      iap_wizard_set_active_stage(priv->iw, &priv->stage[priv->active_stage]);
+      return page;
+    }
+
+    if (show_note)
+    {
+      hildon_banner_show_information(GTK_WIDGET(dialog), NULL,
+                                     _("conn_ib_enter_name"));
+      gtk_widget_grab_focus(widget);
+      return NULL;
+    }
+
+    return NULL;
+  }
+
+  type = stage_get_string(s, "type");
+
+  if (type && !strncmp(type, "WLAN_", 5))
+  {
+    iap_wizard_select_plugin_label(priv->iw, "WLAN", 0);
+    priv->active_stage = 1;
+
+    if (s != &priv->stage[1])
+    {
+      stage_copy(s, &priv->stage[1]);
+      iap_wizard_set_active_stage(priv->iw, &priv->stage[priv->active_stage]);
+    }
+
+    page = "WLAN_MANUAL";
+  }
+  else
+    page = NULL;
+
+  g_free(type);
+
+  return page;
+}
+
 gboolean
 iap_wizard_plugin_init(struct iap_wizard *iw,
                        struct iap_wizard_plugin *plugin)
@@ -1788,7 +1893,7 @@ iap_wizard_plugin_init(struct iap_wizard *iw,
   plugin->advanced_done = iap_wizard_wlan_advanced_done;
   plugin->save_state = iap_wizard_wlan_save_state;
   plugin->restore = iap_wizard_wlan_restore_state;
-/*  plugin->get_page = iap_wizard_wlan_get_page;*/
+  plugin->get_page = iap_wizard_wlan_get_page;
   plugin->widgets =
       g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
