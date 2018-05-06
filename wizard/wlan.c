@@ -1415,9 +1415,58 @@ iap_wizard_wlan_advanced_show(gpointer user_data, struct stage *s)
   }
 }
 
+static GtkWidget *
+wlan_tx_power_create()
+{
+  GtkWidget *combo_box = gtk_combo_box_new_text();
+
+  gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box),
+                            _("conn_set_iap_fi_adv_misc_txpower_2"));
+  gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box),
+                            _("conn_set_iap_fi_adv_misc_txpower_3"));
+
+  return combo_box;
+}
+
+static GtkWidget *
+wlan_adhoc_channel_create()
+{
+  int i;
+  GtkWidget *widget = gtk_combo_box_new_text();
+  GtkComboBox *combo_box = GTK_COMBO_BOX(widget);
+  char buf[16];
+
+  gtk_combo_box_append_text(combo_box,
+                            _("conn_set_iap_fi_adv_misc_adhoc_auto"));
+
+  for (i = 2; i < 12; i++)
+  {
+    sprintf(buf, "%d", i);
+    gtk_combo_box_append_text(combo_box, buf);
+  }
+
+  return widget;
+}
+
+static GtkWidget *
+wlan_powersave_create()
+{
+  GtkWidget *widget = gtk_combo_box_new_text();
+  GtkComboBox *combo_box = GTK_COMBO_BOX(widget);
+
+  gtk_combo_box_append_text(combo_box,
+                            _("conn_set_iap_fi_adv_misc_powersave_max"));
+  gtk_combo_box_append_text(combo_box,
+                            _("conn_set_iap_fi_adv_misc_powersave_med"));
+  gtk_combo_box_append_text(combo_box,
+                            _("conn_set_iap_fi_adv_misc_powersave_min"));
+
+  return widget;
+}
+
 static struct iap_advanced_widget ti_adv_misc_advanced_widgets[] =
 {
-/*  {
+  {
     NULL,
     "WLAN_TX_POWER",
     NULL,
@@ -1452,13 +1501,23 @@ static struct iap_advanced_widget ti_adv_misc_advanced_widgets[] =
     "conn_set_iap_fi_adv_misc_powersave",
     wlan_powersave_create,
     0
-  },*/
+  },
   {NULL, NULL, NULL, NULL, NULL, NULL, 0}
 };
 
+static GtkWidget *wlan_eap_use_manual_create()
+{
+  GtkWidget *entry;
+
+  entry = gtk_entry_new();
+  hildon_gtk_entry_set_input_mode(GTK_ENTRY(entry), HILDON_GTK_INPUT_MODE_FULL);
+
+  return entry;
+}
+
 static struct iap_advanced_widget ti_adv_eap_advanced_widgets[] =
 {
-/*  {
+  {
     NULL,
     "WLAN_EAP_USE_MANUAL",
     NULL,
@@ -1477,14 +1536,14 @@ static struct iap_advanced_widget ti_adv_eap_advanced_widgets[] =
     0
   },
   {
-    &validate_wlan_eap_client_auth,
+    validate_wlan_eap_client_auth,
     "WLAN_EAP_CLIENT_AUTH",
     NULL,
     NULL,
     "conn_set_iap_fi_wlan_req_cli_auth",
     gtk_check_button_new,
     0
-  },*/
+  },
   {NULL, NULL, NULL, NULL, NULL, NULL, 0}
 };
 
