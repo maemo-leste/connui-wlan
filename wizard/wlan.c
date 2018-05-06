@@ -1006,7 +1006,7 @@ wlan_wpa_preshared_create(gpointer user_data)
   return vbox;
 }
 
-const char *
+static const char *
 wlan_wpa_preshared_get_page(gpointer user_data, gboolean show_note)
 {
   wlan_plugin_private *priv = user_data;
@@ -1022,6 +1022,49 @@ wlan_wpa_preshared_get_page(gpointer user_data, gboolean show_note)
                                    _("conn_ib_min8val_req"));
     gtk_widget_grab_focus(GTK_WIDGET(widget));
   }
+
+  return NULL;
+}
+
+static GtkWidget *
+wlan_wpa_eap_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *combo_box;
+  GtkWidget *caption;
+
+  combo_box = iap_widgets_create_static_combo_box(
+        _("conn_set_iap_fi_wlan_wpa_eap_type_peap"),
+        _("conn_set_iap_fi_wlan_wpa_eap_type_tls"),
+        _("conn_set_iap_fi_wlan_wpa_eap_type_ttls"),
+        NULL);
+  g_signal_connect(G_OBJECT(combo_box), "changed",
+                   G_CALLBACK(wlan_manual_security_changed_cb), priv);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_EAP_TYPE"),
+                      combo_box);
+  caption = hildon_caption_new(0, _("conn_set_iap_fi_wlan_wpa_eap_type_txt"),
+                               combo_box, NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  return vbox;
+}
+
+static const char *
+wlan_wpa_eap_get_page(gpointer user_data, gboolean show_note)
+{
+  wlan_plugin_private *priv = user_data;
+  gpointer widget = g_hash_table_lookup(priv->plugin->widgets, "WLAN_EAP_TYPE");
+  gint active = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
+  static const char *eap_type_pages[] =
+  {
+    "WLAN_EAP_PEAP",
+    "WLAN_EAP_TLS",
+    "WLAN_EAP_TTLS"
+  };
+
+  if (active >= 0)
+    return eap_type_pages[active];
 
   return NULL;
 }
@@ -1072,7 +1115,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupWLANwpapsk",
     NULL
   },
-/*  {
+  {
     "WLAN_WPA_EAP",
     "conn_set_iap_ti_wlan_wpa_eap_type",
     wlan_wpa_eap_create,
@@ -1083,7 +1126,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupWLANwpaeaptype",
     NULL
   },
-  {
+  /*{
     "WLAN_EAP_TLS",
     "conn_set_iap_ti_wlan_wpa_eap_tls",
     wlan_eap_tls_create,
