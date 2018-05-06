@@ -700,7 +700,7 @@ wlan_scan_prev(gpointer user_data)
   }
 }
 
-const char *
+static const char *
 wlan_scan_get_page(gpointer user_data, gboolean show_note)
 {
   wlan_plugin_private *priv = user_data;
@@ -1069,7 +1069,196 @@ wlan_wpa_eap_get_page(gpointer user_data, gboolean show_note)
   return NULL;
 }
 
-struct iap_wizard_page iap_wizard_wlan_pages[] =
+static GtkWidget *
+wlan_eap_tls_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget *combo_box = iap_widgets_create_certificate_combo_box();
+  GtkWidget *caption;
+
+  g_hash_table_insert(priv->plugin->widgets,
+                      g_strdup("WLAN_EAP_TLS_CERTIFICATE"), combo_box);
+  caption = hildon_caption_new(0, _("conn_set_iap_fi_wlan_sel_cert"), combo_box,
+                               NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  return vbox;
+}
+
+static GtkWidget *
+wlan_eap_peap_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkSizeGroup *group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+  GtkWidget *widget;
+  GtkWidget *caption;
+
+  widget = iap_widgets_create_certificate_combo_box();
+  g_hash_table_insert(priv->plugin->widgets,
+                      g_strdup("WLAN_EAP_PEAP_CERTIFICATE"), widget);
+  caption = hildon_caption_new(group, _("conn_set_iap_fi_wlan_sel_cert"),
+                               widget, NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+  widget = iap_widgets_create_static_combo_box(
+        _("conn_set_iap_fi_wlan_peap_meth_gtc"),
+        _("conn_set_iap_fi_wlan_peap_meth_mschapv2"),
+        NULL);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_EAP_PEAP_TYPE"),
+                      widget);
+  caption = hildon_caption_new(group, _("conn_set_iap_fi_wlan_peap_meth"),
+                               widget, NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+  g_object_unref(G_OBJECT(group));
+
+  return vbox;
+}
+
+static GtkWidget *
+wlan_eap_ttls_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkSizeGroup *group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+  GtkWidget *widget;
+  GtkWidget *caption;
+  GConfClient *gconf;
+  gboolean pap_enabled;
+
+  widget = iap_widgets_create_certificate_combo_box();
+  g_hash_table_insert(priv->plugin->widgets,
+                      g_strdup("WLAN_EAP_TTLS_CERTIFICATE"), widget);
+  caption = hildon_caption_new(group, _("conn_set_iap_fi_wlan_sel_cert"),
+                               widget, NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  gconf = gconf_client_get_default();
+  pap_enabled = gconf_client_get_bool(gconf,
+                                      ICD_GCONF_SETTINGS"/ui/pap_enabled",
+                                      NULL);
+  g_object_unref(gconf);
+
+  widget = iap_widgets_create_static_combo_box(
+        _("conn_set_iap_fi_wlan_ttls_meth_gtc"),
+        _("conn_set_iap_fi_wlan_ttls_meth_mschapv2"),
+        _("conn_set_iap_fi_wlan_ttls_meth_mschapv2_no_eap"),
+        pap_enabled ? "EAP PAP" : NULL,
+        NULL);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_EAP_TTLS_TYPE"),
+                      widget);
+  caption = hildon_caption_new(group, _("conn_set_iap_fi_wlan_ttls_meth"),
+                               widget, NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+  g_object_unref(G_OBJECT(group));
+
+  return vbox;
+}
+
+static void
+iap_wizard_wlan_eap_password_toggled_cb(GtkToggleButton *togglebutton,
+                                        GtkWidget *caption)
+{
+  gtk_widget_set_sensitive(GTK_WIDGET(caption),
+                           !gtk_toggle_button_get_active(togglebutton));
+}
+
+static GtkWidget *
+wlan_eap_password_create(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+  GtkSizeGroup *group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+  GtkWidget *widget;
+  GtkWidget *caption;
+  HildonGtkInputMode im;
+
+  /* username */
+  widget = gtk_entry_new();
+  im = hildon_gtk_entry_get_input_mode(GTK_ENTRY(widget));
+  im &= ~(HILDON_GTK_INPUT_MODE_AUTOCAP | HILDON_GTK_INPUT_MODE_DICTIONARY);
+  hildon_gtk_entry_set_input_mode(GTK_ENTRY(widget), im);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_EAP_USERNAME"),
+                      widget);
+  caption = hildon_caption_new(group, _("conn_set_iap_fi_wlan_username"),
+                               widget, NULL, HILDON_CAPTION_OPTIONAL);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  /* password */
+  widget = gtk_entry_new();
+  im = hildon_gtk_entry_get_input_mode(GTK_ENTRY(widget));
+  im &= ~(HILDON_GTK_INPUT_MODE_AUTOCAP | HILDON_GTK_INPUT_MODE_DICTIONARY);
+  im |= HILDON_GTK_INPUT_MODE_INVISIBLE;
+  hildon_gtk_entry_set_input_mode(GTK_ENTRY(widget), im);
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_EAP_PASSWORD"),
+                      widget);
+  caption = hildon_caption_new(group, _("conn_set_iap_fi_wlan_password"),
+                               widget, NULL, HILDON_CAPTION_OPTIONAL);
+  g_hash_table_insert(priv->plugin->widgets,
+                      g_strdup("WLAN_EAP_PASSWORD_CAPTION"), caption);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  g_object_unref(G_OBJECT(group));
+
+  /* password check button */
+  widget = gtk_check_button_new();
+  g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_EAP_ASK_PASSWORD"), widget);
+  g_signal_connect(G_OBJECT(widget), "toggled",
+                   G_CALLBACK(iap_wizard_wlan_eap_password_toggled_cb),
+                   caption);
+
+  caption = hildon_caption_new(0, _("conn_set_iap_fi_wlan_ask_pw"), widget,
+                               NULL, HILDON_CAPTION_OPTIONAL);
+  g_hash_table_insert(priv->plugin->widgets,
+                      g_strdup("WLAN_EAP_ASK_PASSWORD_CAPTION"), caption);
+  gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
+
+  return vbox;
+}
+
+static void
+wlan_eap_password_finish(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  int type;
+  const char *title;
+
+  type = stage_get_int(iap_wizard_get_active_stage(priv->iw),
+                       "PEAP_tunneled_eap_type");
+
+  if (type == EAP_GTC)
+  {
+    gpointer widget;
+
+    title = _("conn_set_iap_ti_wlan_wpa_eap_gtc");
+    widget = g_hash_table_lookup(priv->plugin->widgets,
+                                 "WLAN_EAP_PASSWORD_CAPTION");
+    gtk_widget_hide(GTK_WIDGET(widget));
+    widget = g_hash_table_lookup(priv->plugin->widgets,
+                                 "WLAN_EAP_ASK_PASSWORD_CAPTION");
+    gtk_widget_hide(GTK_WIDGET(widget));
+  }
+  else
+  {
+    gpointer widget;
+
+    if (type == EAP_TTLS_PAP)
+      title = "Connection setup: WPA EAP PAP";
+    else
+      title = _("conn_set_iap_ti_wlan_wpa_eap_mschapv2");
+
+    widget = g_hash_table_lookup(priv->plugin->widgets,
+                                 "WLAN_EAP_PASSWORD_CAPTION");
+    gtk_widget_show(GTK_WIDGET(widget));
+    widget = g_hash_table_lookup(priv->plugin->widgets,
+                                 "WLAN_EAP_ASK_PASSWORD_CAPTION");
+    gtk_widget_show(GTK_WIDGET(widget));
+  }
+
+  gtk_window_set_title(GTK_WINDOW(iap_wizard_get_dialog(priv->iw)), title);
+}
+
+static struct iap_wizard_page iap_wizard_wlan_pages[] =
 {
   {
     "WLAN_MANUAL",
@@ -1126,7 +1315,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "Connectivity_Internetsettings_IAPsetupWLANwpaeaptype",
     NULL
   },
-  /*{
+  {
     "WLAN_EAP_TLS",
     "conn_set_iap_ti_wlan_wpa_eap_tls",
     wlan_eap_tls_create,
@@ -1169,7 +1358,7 @@ struct iap_wizard_page iap_wizard_wlan_pages[] =
     "COMPLETE",
     "Connectivity_Internetsettings_IAPsetupWLANwpaeaptype",
     NULL
-  },*/
+  },
   {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 };
 
@@ -1190,7 +1379,7 @@ iap_wizard_wlan_save_state(gpointer user_data, GByteArray *state)
   stage_dump_cache(&priv->stage[1], state);
 }
 
-void
+static void
 iap_wizard_wlan_restore_state(gpointer user_data, struct stage_cache *s)
 {
   wlan_plugin_private *priv = user_data;
