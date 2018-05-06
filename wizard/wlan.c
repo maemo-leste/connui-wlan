@@ -6,6 +6,7 @@
 #include <connui/iapsettings/mapper.h>
 #include <connui/iapsettings/widgets.h>
 #include <connui/iapsettings/wizard.h>
+#include <connui/iapsettings/advanced.h>
 #include <icd/osso-ic-gconf.h>
 
 #include <ctype.h>
@@ -1414,6 +1415,223 @@ iap_wizard_wlan_advanced_show(gpointer user_data, struct stage *s)
   }
 }
 
+static struct iap_advanced_widget ti_adv_misc_advanced_widgets[] =
+{
+/*  {
+    NULL,
+    "WLAN_TX_POWER",
+    NULL,
+    NULL,
+    "conn_set_iap_fi_adv_misc_txpower",
+    wlan_tx_power_create,
+    0
+  },
+  {
+    &is_wlan_adhoc,
+    "WLAN_ADHOC_CHANNEL",
+    NULL,
+    NULL,
+    "conn_set_iap_fi_adv_misc_adhoc_ch",
+    wlan_adhoc_channel_create,
+    0
+  },
+  {
+    is_wpa,
+    "WLAN_WPA2_ONLY",
+    NULL,
+    NULL,
+    "conn_set_iap_fi_adv_misc_wpa2",
+    gtk_check_button_new,
+    0
+  },
+  {
+    is_wlan,
+    "WLAN_POWERSAVE",
+    NULL,
+    NULL,
+    "conn_set_iap_fi_adv_misc_powersave",
+    wlan_powersave_create,
+    0
+  },*/
+  {NULL, NULL, NULL, NULL, NULL, NULL, 0}
+};
+
+static struct iap_advanced_widget ti_adv_eap_advanced_widgets[] =
+{
+/*  {
+    NULL,
+    "WLAN_EAP_USE_MANUAL",
+    NULL,
+    NULL,
+    "conn_set_iap_fi_wlan_use_man_eap_id",
+    gtk_check_button_new,
+    TRUE
+  },
+  {
+    NULL,
+    "WLAN_EAP_ID",
+    "WLAN_EAP_USE_MANUAL",
+    NULL,
+    "conn_set_iap_fi_wlan_eap_id",
+    wlan_eap_use_manual_create,
+    0
+  },
+  {
+    &validate_wlan_eap_client_auth,
+    "WLAN_EAP_CLIENT_AUTH",
+    NULL,
+    NULL,
+    "conn_set_iap_fi_wlan_req_cli_auth",
+    gtk_check_button_new,
+    0
+  },*/
+  {NULL, NULL, NULL, NULL, NULL, NULL, 0}
+};
+
+static void
+wlan_tx_power_changed_cb(GtkComboBox *widget, wlan_plugin_private *priv)
+{
+  const char *msgid;
+
+  if (iap_wizard_get_import_mode(priv->iw))
+    return;
+
+  if (gtk_combo_box_get_active(widget))
+    msgid = _("conn_ib_net_tx_to_100");
+  else
+    msgid = _("conn_ib_net_tx_to_10");
+
+  if (msgid)
+  {
+    hildon_banner_show_information(gtk_widget_get_toplevel(GTK_WIDGET(widget)),
+                                                           NULL, msgid);
+  }
+}
+
+static void
+iap_wizard_wlan_powersave_note_response_cb(GtkDialog *dialog, gint response_id,
+                                           wlan_plugin_private *priv)
+{
+  GtkWidget *widget = iap_wizard_get_widget(priv->iw, "WLAN_POWERSAVE");
+
+  if (response_id == GTK_RESPONSE_CANCEL)
+  {
+    iap_wizard_set_import_mode(priv->iw, 1);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(widget), priv->powersave);
+    iap_wizard_set_import_mode(priv->iw, 0);
+  }
+  else
+    priv->powersave = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
+
+  gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+static void
+wlan_powersave_changed_cb(GtkComboBox *widget, wlan_plugin_private *priv)
+{
+  gint powersave;
+
+  if (iap_wizard_get_import_mode(priv->iw))
+    return;
+
+  powersave = gtk_combo_box_get_active(widget);
+
+  if (powersave && powersave != priv->powersave)
+  {
+    GtkWidget *note;
+    GtkWidget *toplevel = gtk_widget_get_toplevel(GTK_WIDGET(widget));
+
+    note = hildon_note_new_confirmation(GTK_WINDOW(toplevel),
+                                        _("conn_nc_power_saving_warning"));
+    iap_common_set_close_response(note, GTK_RESPONSE_CANCEL);
+    g_signal_connect(note, "response",
+                     G_CALLBACK(iap_wizard_wlan_powersave_note_response_cb),
+                     priv);
+    gtk_widget_show_all(note);
+  }
+}
+
+static void
+ti_adv_misc_advanced_activate(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+
+  if (!priv->initialized)
+  {
+    GtkWidget *widget = iap_wizard_get_widget(priv->iw, "WLAN_TX_POWER");
+
+    if (widget)
+    {
+      g_signal_connect(G_OBJECT(widget), "changed",
+                       G_CALLBACK(wlan_tx_power_changed_cb), priv);
+    }
+
+    widget = iap_wizard_get_widget(priv->iw, "WLAN_POWERSAVE");
+
+    if (widget)
+      g_signal_connect(G_OBJECT(widget), "changed",
+                       G_CALLBACK(wlan_powersave_changed_cb), priv);
+
+    priv->initialized = TRUE;
+  }
+}
+
+static struct iap_advanced_page iap_wizard_wlan_advanced_pages[] =
+{
+  {
+    0,
+    "conn_set_iap_ti_adv_misc",
+    ti_adv_misc_advanced_widgets,
+    ti_adv_misc_advanced_activate,
+    "Connectivity_Internetsettings_IAPsetupAdvancedmiscCSD",
+    NULL
+  },
+  {
+    0,
+    "conn_set_iap_ti_adv_eap",
+    ti_adv_eap_advanced_widgets,
+    NULL,
+    "Connectivity_Internetsettings_IAPsetupAdvancedeapWLAN",
+    NULL
+  },
+  {0, NULL, NULL, NULL, NULL, NULL}
+};
+
+static struct iap_advanced_page iap_wizard_wlan_advanced_pages_no_eap[] =
+{
+  {
+    0,
+    "conn_set_iap_ti_adv_misc",
+    ti_adv_misc_advanced_widgets,
+    ti_adv_misc_advanced_activate,
+    "Connectivity_Internetsettings_IAPsetupAdvancedmiscCSD",
+    NULL
+  },
+  {0, NULL, NULL, NULL, NULL, NULL}
+};
+
+static struct iap_advanced_page *
+iap_wizard_wlan_get_advanced(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  struct stage *s = iap_wizard_get_active_stage(priv->iw);
+  gchar *wlan_security;
+  struct iap_advanced_page *rv;
+
+
+  wlan_security = stage_get_string(s, "wlan_security");
+  priv->initialized = FALSE;
+
+  if (wlan_security && !strcmp(wlan_security, "WPA_EAP"))
+    rv = iap_wizard_wlan_advanced_pages;
+  else
+    rv = iap_wizard_wlan_advanced_pages_no_eap;
+
+  g_free(wlan_security);
+
+  return rv;
+}
+
 gboolean
 iap_wizard_plugin_init(struct iap_wizard *iw,
                        struct iap_wizard_plugin *plugin)
@@ -1444,7 +1662,7 @@ iap_wizard_plugin_init(struct iap_wizard *iw,
   plugin->prio = 1000;
   plugin->priv = priv;
 
-//  plugin->get_advanced = iap_wizard_wlan_get_advanced;
+  plugin->get_advanced = iap_wizard_wlan_get_advanced;
   plugin->stage_widgets = iap_wizard_wlan_widgets;
   plugin->pages = iap_wizard_wlan_pages;
 /*  plugin->get_widgets = iap_wizard_wlan_advanced_get_widgets;*/
