@@ -1721,6 +1721,35 @@ iap_wizard_wlan_advanced_done(gpointer user_data)
 
 }
 
+static const gchar **
+iap_wizard_wlan_advanced_get_widgets(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  struct stage *s;
+  gchar *type = NULL;
+  static gboolean not_initialized = TRUE;
+  static const gchar *widgets[2] = {NULL, NULL};
+
+  s = iap_wizard_get_active_stage(priv->iw);
+
+  if (s)
+    type = stage_get_string(s, "type");
+
+  if (not_initialized || !type || (type && !strncmp(type, "WLAN_", 5)))
+  {
+    not_initialized = FALSE;
+    widgets[0] = _("conn_set_iap_fi_wlan");
+    g_free(type);
+    return widgets;
+  }
+
+  widgets[0] = NULL;
+  not_initialized = FALSE;
+  g_free(type);
+
+  return widgets;
+}
+
 gboolean
 iap_wizard_plugin_init(struct iap_wizard *iw,
                        struct iap_wizard_plugin *plugin)
@@ -1754,7 +1783,7 @@ iap_wizard_plugin_init(struct iap_wizard *iw,
   plugin->get_advanced = iap_wizard_wlan_get_advanced;
   plugin->stage_widgets = iap_wizard_wlan_widgets;
   plugin->pages = iap_wizard_wlan_pages;
-/*  plugin->get_widgets = iap_wizard_wlan_advanced_get_widgets;*/
+  plugin->get_widgets = iap_wizard_wlan_advanced_get_widgets;
   plugin->advanced_show = iap_wizard_wlan_advanced_show;
   plugin->advanced_done = iap_wizard_wlan_advanced_done;
   plugin->save_state = iap_wizard_wlan_save_state;
