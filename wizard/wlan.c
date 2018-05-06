@@ -881,7 +881,7 @@ wlan_wep_create(gpointer user_data)
     g_signal_connect(G_OBJECT(entry), "changed",
                      G_CALLBACK(wlan_manual_ssid_entry_changed_cb), priv);
     g_hash_table_insert(priv->plugin->widgets,
-                        g_strdup_printf("WLAN_WEP_KEY%d", i), entry);
+                        g_strdup_printf("WLAN_WEP_KEY%d", i + 1), entry);
     caption = hildon_caption_new(group, _(wepk_msgid[i]), entry, NULL,
                                  HILDON_CAPTION_OPTIONAL);
     gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
