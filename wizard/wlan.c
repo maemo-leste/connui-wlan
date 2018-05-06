@@ -1691,6 +1691,36 @@ iap_wizard_wlan_get_advanced(gpointer user_data)
   return rv;
 }
 
+static void
+iap_wizard_wlan_advanced_done(gpointer user_data)
+{
+  wlan_plugin_private *priv = user_data;
+  struct stage *s = iap_wizard_get_active_stage(priv->iw);
+  gchar *wlan_security = stage_get_string(s, "wlan_security");
+  GtkWidget *widget = iap_wizard_get_widget(priv->iw, "WLAN_TX_POWER");
+
+  if (widget)
+  {
+    gint wlan_tx_power;
+    GConfClient *gconf;
+
+    if (gtk_combo_box_get_active(GTK_COMBO_BOX(widget)))
+      wlan_tx_power = 8;
+    else
+      wlan_tx_power = 4;
+
+    gconf = gconf_client_get_default();
+    gconf_client_set_int(gconf, ICD_GCONF_PATH"/wlan_tx_power", wlan_tx_power,
+                         NULL);
+    g_object_unref(gconf);
+  }
+  else if (wlan_security && !strcmp(wlan_security, "WPA_PSK"))
+    stage_set_val(s, "EAP_wpa_preshared_key", NULL);
+
+  g_free(wlan_security);
+
+}
+
 gboolean
 iap_wizard_plugin_init(struct iap_wizard *iw,
                        struct iap_wizard_plugin *plugin)
@@ -1726,7 +1756,7 @@ iap_wizard_plugin_init(struct iap_wizard *iw,
   plugin->pages = iap_wizard_wlan_pages;
 /*  plugin->get_widgets = iap_wizard_wlan_advanced_get_widgets;*/
   plugin->advanced_show = iap_wizard_wlan_advanced_show;
-/*  plugin->advanced_done = iap_wizard_wlan_advanced_done;*/
+  plugin->advanced_done = iap_wizard_wlan_advanced_done;
   plugin->save_state = iap_wizard_wlan_save_state;
   plugin->restore = iap_wizard_wlan_restore_state;
 /*  plugin->get_page = iap_wizard_wlan_get_page;*/
