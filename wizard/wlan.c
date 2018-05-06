@@ -8,6 +8,7 @@
 #include <connui/iapsettings/wizard.h>
 #include <icd/osso-ic-gconf.h>
 
+#include <ctype.h>
 #include <string.h>
 #include <libintl.h>
 
@@ -825,7 +826,7 @@ wlan_scan_finish(gpointer user_data)
     CONNUI_ERR("Couldn't init osso context");
 }
 
-static const char *wepk_data[] =
+static const char *wepk_msgid[] =
 {
   "conn_set_iap_fi_wlan_wepk_data1",
   "conn_set_iap_fi_wlan_wepk_data2",
@@ -862,7 +863,7 @@ wlan_wep_create(gpointer user_data)
                                combo_box, NULL, HILDON_CAPTION_OPTIONAL);
   gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
 
-  for (i = 0; i < G_N_ELEMENTS(wepk_data); i++)
+  for (i = 0; i < G_N_ELEMENTS(wepk_msgid); i++)
   {
     HildonGtkInputMode im;
     GtkWidget *entry = gtk_entry_new();
@@ -880,7 +881,7 @@ wlan_wep_create(gpointer user_data)
                      G_CALLBACK(wlan_manual_ssid_entry_changed_cb), priv);
     g_hash_table_insert(priv->plugin->widgets,
                         g_strdup_printf("WLAN_WEP_KEY%d", i), entry);
-    caption = hildon_caption_new(group, _(wepk_data[i]), entry, NULL,
+    caption = hildon_caption_new(group, _(wepk_msgid[i]), entry, NULL,
                                  HILDON_CAPTION_OPTIONAL);
     gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
   }
@@ -888,6 +889,92 @@ wlan_wep_create(gpointer user_data)
   g_object_unref(G_OBJECT(group));
 
   return vbox;
+}
+
+static const char *
+wlan_wep_get_page(gpointer user_data, gboolean show_note)
+{
+  wlan_plugin_private *priv = user_data;
+  int idx;
+  gchar *id;
+  GtkEntry *entry;
+  const char *err_msg = NULL;
+  guint entered_keys = 0;
+
+  for (idx = 0; idx < 4; idx++)
+  {
+    gchar *id = g_strdup_printf("WLAN_WEP_KEY%d", idx + 1);
+    const char *key;
+    int len;
+
+    entry = GTK_ENTRY(g_hash_table_lookup(priv->plugin->widgets, id));
+    key = gtk_entry_get_text(entry);
+    len = strlen(key);
+    g_free(id);
+
+    if (!len)
+      continue;
+
+    entered_keys |= (1 << idx);
+
+    if (len == WLANCOND_MIN_KEY_LEN || len == WLANCOND_MAX_KEY_LEN)
+      continue;
+
+    if (len == 2 * WLANCOND_MIN_KEY_LEN || len == 2 * WLANCOND_MAX_KEY_LEN)
+    {
+      int i;
+
+      for (i = 0; i < len; i++)
+      {
+        if (!isxdigit(key[i]))
+        {
+          err_msg = _("conn_ib_wepkey_invalid_characters");
+          break;
+        }
+      }
+    }
+    else
+    {
+      err_msg = _("conn_ib_wepkey_invalid_length");
+      break;
+    }
+  }
+
+  if (idx == 4)
+  {
+    gint active = gtk_combo_box_get_active(
+          GTK_COMBO_BOX(g_hash_table_lookup(priv->plugin->widgets,
+                                            "WLAN_WEP_DEF_KEY")));
+
+    if (active > 0 && ((entered_keys >> active) & 1))
+      return "COMPLETE";
+
+    id = g_strdup_printf("WLAN_WEP_KEY%d", active + 1);
+
+
+    if (active >= 0 && active < 4)
+      entry = GTK_ENTRY(g_hash_table_lookup(priv->plugin->widgets, id));
+    else
+      entry = NULL;
+
+    g_free(id);
+  }
+
+  if (!show_note)
+    return NULL;
+
+  if (err_msg)
+  {
+    hildon_banner_show_information(
+          iap_wizard_get_dialog(priv->iw), NULL, err_msg);
+  }
+
+  if (!entry)
+    return NULL;
+
+  gtk_widget_grab_focus(GTK_WIDGET(entry));
+
+  return NULL;
 }
 
 struct iap_wizard_page iap_wizard_wlan_pages[] =
