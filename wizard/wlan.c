@@ -947,11 +947,10 @@ wlan_wep_get_page(gpointer user_data, gboolean show_note)
           GTK_COMBO_BOX(g_hash_table_lookup(priv->plugin->widgets,
                                             "WLAN_WEP_DEF_KEY")));
 
-    if (active > 0 && ((entered_keys >> active) & 1))
+    if (active >= 0 && (entered_keys & (1 << active)))
       return "COMPLETE";
 
     id = g_strdup_printf("WLAN_WEP_KEY%d", active + 1);
-
 
     if (active >= 0 && active < 4)
       entry = GTK_ENTRY(g_hash_table_lookup(priv->plugin->widgets, id));
