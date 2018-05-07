@@ -2,7 +2,7 @@ Source: connui-wlan
 Section: x11
 Priority: optional
 Maintainer: Pali Rohár <pali.rohar@gmail.com>
-Build-Depends: debhelper (>= 5), libdbus-1-dev, libhildon1-dev, libconnui-dev (>= 2.88), libconbtui0-dev (>= 2.88.10), connui-iapsettings-dev (>= 2.78.2), libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev
+Build-Depends: debhelper (>= 5), cdbs, libdbus-1-dev, libhildon1-dev, libconnui-dev (>= 2.88), libconbtui0-dev (>= 2.88.10), connui-iapsettings-dev (>= 2.78.2), libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev
 
 Package: connui-conndlgs-wlan
 Architecture: any
