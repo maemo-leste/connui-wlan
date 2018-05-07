@@ -32,7 +32,7 @@ Description: Internet Settings UI for WLAN IAPs
 Package: connui-iapsettings-wlan-dbg
 Architecture: any
 Section: devel
-Depends: ${shlibs:Depends}, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0
+Depends: ${misc:Depends}, connui-iapsettings-wlan (= ${binary:Version})
 Description: Internet Settings UI for WLAN IAPs
  This package provides the Internet Settings UI plugin that allows you to
  create, edit and delete WLAN Internet Access Point configurations.
