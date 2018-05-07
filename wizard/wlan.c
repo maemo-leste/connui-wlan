@@ -933,6 +933,9 @@ wlan_wep_get_page(gpointer user_data, gboolean show_note)
           break;
         }
       }
+
+      if (i != len)
+        break;
     }
     else
     {
