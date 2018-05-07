@@ -1,3 +1,11 @@
+connui-wlan (2.47) unstable; urgency=low
+
+  * Port to leste
+  * Finish conndlgs RE work
+  * RE wlan wizard plugin
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Mon, 07 May 2018 09:11:32 +0300
+
 connui-conndlgs-wlan (2.46+0cssu1) unstable; urgency=low
 
   * Do not freeze Internet Connections select dialog after closing EAP-TLS password dialog
