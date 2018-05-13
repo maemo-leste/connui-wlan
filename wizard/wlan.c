@@ -344,7 +344,7 @@ static struct stage_widget iap_wizard_wlan_widgets[] =
     "EAP_TLS_PEAP_client_certificate_file",
     NULL,
     &mapper_combo2string,
-    GINT_TO_POINTER(1)
+    GUINT_TO_POINTER(1)
   },
   {
     export_EAP_default_type,
@@ -353,7 +353,7 @@ static struct stage_widget iap_wizard_wlan_widgets[] =
     "EAP_TLS_PEAP_client_certificate_file",
     NULL,
     &mapper_combo2string,
-    GINT_TO_POINTER(1)
+    GUINT_TO_POINTER(1)
   },
   {
     export_EAP_default_type,
@@ -362,7 +362,7 @@ static struct stage_widget iap_wizard_wlan_widgets[] =
     "EAP_TLS_PEAP_client_certificate_file",
     NULL,
     &mapper_combo2string,
-    GINT_TO_POINTER(1)
+    GUINT_TO_POINTER(1)
   },
   {
     NULL,
