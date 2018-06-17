@@ -1,3 +1,9 @@
+connui-wlan (2.47.2) unstable; urgency=low
+
+  * iap_dialog_server_cert: add missing autofoo build flags
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Sun, 17 Jun 2018 08:14:33 +0300
+
 connui-wlan (2.47.1) unstable; urgency=low
 
   * use GUINT_TO_POINTER instead of GINT_TO_POINTER to pass column id to
