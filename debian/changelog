@@ -1,3 +1,9 @@
+connui-wlan (2.47.3) unstable; urgency=low
+
+  * wizard/wlan: always enable eap pap
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Tue, 19 Jun 2018 13:00:00 +0200
+
 connui-wlan (2.47.2) unstable; urgency=low
 
   * iap_dialog_server_cert: add missing autofoo build flags
