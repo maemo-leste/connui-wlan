@@ -1127,7 +1127,6 @@ wlan_eap_ttls_create(gpointer user_data)
   GtkWidget *widget;
   GtkWidget *caption;
   GConfClient *gconf;
-  gboolean pap_enabled;
 
   widget = iap_widgets_create_certificate_combo_box();
   g_hash_table_insert(priv->plugin->widgets,
@@ -1137,16 +1136,13 @@ wlan_eap_ttls_create(gpointer user_data)
   gtk_box_pack_start(GTK_BOX(vbox), caption, FALSE, FALSE, 0);
 
   gconf = gconf_client_get_default();
-  pap_enabled = gconf_client_get_bool(gconf,
-                                      ICD_GCONF_SETTINGS"/ui/pap_enabled",
-                                      NULL);
   g_object_unref(gconf);
 
   widget = iap_widgets_create_static_combo_box(
         _("conn_set_iap_fi_wlan_ttls_meth_gtc"),
         _("conn_set_iap_fi_wlan_ttls_meth_mschapv2"),
         _("conn_set_iap_fi_wlan_ttls_meth_mschapv2_no_eap"),
-        pap_enabled ? "EAP PAP" : NULL,
+        "EAP PAP",
         NULL);
   g_hash_table_insert(priv->plugin->widgets, g_strdup("WLAN_EAP_TTLS_TYPE"),
                       widget);
