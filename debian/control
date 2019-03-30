@@ -12,16 +12,6 @@ Description: Connectivity WLAN Dialogs
  This package provides the Connectivity Dialogs for WLAN that are activated
  via Conndlgs daemon.
 
-Package: connui-conndlgs-wlan-dbg
-Architecture: any
-Section: devel
-Depends: ${misc:Depends}, connui-conndlgs-wlan (= ${binary:Version})
-Description: Connectivity WLAN Dialogs
- This package provides the Connectivity Dialogs for WLAN that are activated
- via Conndlgs daemon.
- .
- This package contains the debug symbols.
-
 Package: connui-iapsettings-wlan
 Architecture: any
 Section: x11
@@ -29,13 +19,3 @@ Depends: ${shlibs:Depends}, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-
 Description: Internet Settings UI for WLAN IAPs
  This package provides the Internet Settings UI plugin that allows you to
  create, edit and delete WLAN Internet Access Point configurations.
-
-Package: connui-iapsettings-wlan-dbg
-Architecture: any
-Section: devel
-Depends: connui-iapsettings-wlan (= ${binary:Version})
-Description: Internet Settings UI for WLAN IAPs
- This package provides the Internet Settings UI plugin that allows you to
- create, edit and delete WLAN Internet Access Point configurations.
- .
- This package contains the debug symbols.

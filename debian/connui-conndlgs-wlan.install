@@ -1,2 +1,2 @@
-usr/lib/conndlgs/*.so
+usr/lib/*/conndlgs/*.so
 

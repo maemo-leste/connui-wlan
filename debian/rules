@@ -1,37 +1,4 @@
 #!/usr/bin/make -f
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/autotools.mk
-include /usr/share/cdbs/1/class/gnome.mk
--include /usr/share/cdbs/1/rules/autoreconf.mk
-
-DEB_DH_AUTORECONF_ARGS += --as-needed
-DEB_DH_INSTALL_SOURCEDIR=debian/tmp
-DEB_DESTDIR=$(CURDIR)/debian/tmp
-
-DEB_DBG_PACKAGE_connui-conndlgs-wlan = connui-conndlgs-wlan-dbg
-DEB_DBG_PACKAGE_connui-iapsettings-wlan = connui-iapsettings-wlan-dbg
-
-CFLAGS := $(CFLAGS)
-
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-    DEB_CONFIGURE_EXTRA_FLAGS += --enable-debug
-else
-    DEB_CONFIGURE_EXTRA_FLAGS += --disable-cast-checks
-endif
-
-ifneq (,$(findstring parallel,$(DEB_BUILD_OPTIONS)))
-    PARALLEL_JOBS := $(shell echo $(DEB_BUILD_OPTIONS) | \
-            sed -e 's/.*parallel=\([0-9]\+\).*/\1/')
-    ifeq ($(DEB_BUILD_OPTIONS),$(PARALLEL_JOBS))
-        PARALLEL_JOBS := $(shell if [ -f /proc/cpuinfo ]; \
-                    then echo `cat /proc/cpuinfo | grep 'processor' | wc -l`; \
-                                else echo 1; fi)
-    endif
-    NJOBS := -j$(PARALLEL_JOBS)
-endif
-DEB_MAKE_ENVVARS := MAKEFLAGS=$(NJOBS)
-
-debian/stamp-autotools-files:
-	autoreconf -v --install
-	touch debian/stamp-autotools-files
+%:
+	dh $@

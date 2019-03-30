@@ -1,3 +1,9 @@
+connui-wlan (2.47.4) unstable; urgency=medium
+
+  * Port to debhelper 10.
+
+ -- Ivan J. <parazyd@dyne.org>  Sat, 30 Mar 2019 17:30:47 +0100
+
 connui-wlan (2.47.3) unstable; urgency=low
 
   * wizard/wlan: always enable eap pap
