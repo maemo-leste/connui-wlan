@@ -1,3 +1,10 @@
+connui-wlan (2.47.5) unstable; urgency=medium
+
+  * use pkgconfig provided installation dirs
+  * build with -Wl,--as-needed
+
+ -- Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>  Wed, 15 Jan 2019 10:23:51 +0200
+
 connui-wlan (2.47.4) unstable; urgency=medium
 
   * Port to debhelper 10.
