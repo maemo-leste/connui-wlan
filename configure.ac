@@ -71,10 +71,10 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "${GETTEXT_PACKAGE}", [gettext package])
 
 dnl Installation directories
 
-conndlgslibdir=$libdir/conndlgs
+conndlgslibdir="`$PKG_CONFIG --variable=pluginlibdir connui`"
 AC_SUBST(conndlgslibdir)
 
-iapsettingslibdir=$libdir/iapsettings
+iapsettingslibdir="`$PKG_CONFIG --variable=pluginlibdir connui-iapsettings`"
 AC_SUBST(iapsettingslibdir)
 
 AC_ARG_ENABLE(cast-checks,  [  --disable-cast-checks   compile with GLIB cast checks disabled],[cchecks=${enableval}],cchecks=yes)
