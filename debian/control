@@ -3,7 +3,7 @@ Section: x11
 Priority: optional
 Maintainer: Pali Rohár <pali.rohar@gmail.com>
 Build-Depends: debhelper (>= 5), cdbs, libdbus-1-dev, libhildon1-dev, libconnui-dev (>= 2.88.21), libconbtui0-dev (>= 2.88.10), connui-iapsettings-dev (>= 2.78.11), libmaemosec-certman-applet-dev, libmaemosec-certman-dev, libmaemosec-dev,
- osso-af-settings, libosso-dev, icd2-dev, icd2-osso-ic-dev, libgnomevfs2-dev
+ osso-af-settings, libosso-dev, icd2-dev, icd2-osso-ic-dev
 
 Package: connui-conndlgs-wlan
 Architecture: any
