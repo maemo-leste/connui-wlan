@@ -1,3 +1,9 @@
+connui-wlan (2.47.5-1) unstable; urgency=medium
+
+  * Remove unused libgnomevfs2-dev dependency
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Fri, 24 Jan 2020 13:54:02 +0100
+
 connui-wlan (2.47.5) unstable; urgency=medium
 
   * use pkgconfig provided installation dirs
