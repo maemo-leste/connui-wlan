@@ -583,7 +583,7 @@ iap_wizard_wlan_tree_change(GtkTreeSelection *selection,
                             wlan_plugin_private *priv)
 {
   struct iap_wizard *iw = priv->iw;
-  dbus_uint32_t caps;
+  dbus_uint32_t caps = 0;
   GtkTreeIter iter;
   connui_scan_entry *scan_entry = NULL;
   gchar *ssid;
