@@ -1,3 +1,9 @@
+connui-wlan (2.47.6-1) unstable; urgency=medium
+
+  * Fix daedalus compiler warning
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sat, 30 Nov 2024 23:32:40 +0100
+
 connui-wlan (2.47.5-1) unstable; urgency=medium
 
   * Remove unused libgnomevfs2-dev dependency
